@@ -55,8 +55,8 @@ public class LinkController {
             @ApiResponse(responseCode = "200", description = "Ссылка успешно добавлена в отслеживаемые"),
             @ApiResponse(responseCode = "400", description = """
                     Ошибка валидации:
-                        - chatId - обязательный положительный параметр
-                        - linkUrl - обязательный непустой параметр
+                        - request.chatId - обязательный положительный параметр
+                        - request.linkUrl - обязательный непустой параметр
                     """),
             @ApiResponse(responseCode = "422", description = """
                     Ошибка данных:
@@ -77,7 +77,7 @@ public class LinkController {
             @ApiResponse(responseCode = "200", description = "Ссылка успешно удалена из отслеживаемых"),
             @ApiResponse(responseCode = "400", description = """
                     Ошибка валидации:
-                        - chatId - обязательный положительный параметр
+                        - request.chatId - обязательный положительный параметр
                         - linkId - обязательный положительный параметр
                     """),
             @ApiResponse(responseCode = "422", description = """

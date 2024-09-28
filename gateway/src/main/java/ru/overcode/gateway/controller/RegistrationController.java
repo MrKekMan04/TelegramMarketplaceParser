@@ -29,7 +29,7 @@ public class RegistrationController {
             @ApiResponse(responseCode = "200", description = "Чат успешно зарегистрирован"),
             @ApiResponse(responseCode = "400", description = """
                     Ошибка валидации:
-                        - chatId - обязательный положительный параметр
+                        - request.chatId - обязательный положительный параметр
                     """),
             @ApiResponse(responseCode = "422", description = """
                     Ошибка данных:
