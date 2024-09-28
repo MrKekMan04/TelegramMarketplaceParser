@@ -18,6 +18,7 @@
     <properties>
         <java.version>21</java.version>
         <openapi.version>2.6.0</openapi.version>
+        <shared.version>0.1</shared.version>
     </properties>
 
     <dependencies>
@@ -70,6 +71,13 @@
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka-test</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <!-- Shared Resources -->
+        <dependency>
+            <groupId>ru.overcode</groupId>
+            <artifactId>shared</artifactId>
+            <version>${shared.version}</version>
         </dependency>
     </dependencies>
 
