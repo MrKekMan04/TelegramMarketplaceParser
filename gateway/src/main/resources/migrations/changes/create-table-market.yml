@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-table-market
+      author: MrKekMan04
+      changes:
+        - createTable:
+            tableName: market
+            remarks: Маркетплейс
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  remarks: Идентификатор маркетплейса
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: text
+                  remarks: Название маркетплейса
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: url_domain
+                  type: text
+                  remarks: Доменное имя маркетплейса
+                  constraints:
+                    unique: true
+                    nullable: false

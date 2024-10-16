@@ -1,4 +1,4 @@
-package ru.overcode.gateway.controller;
+package ru.overcode.gateway.controller.rule;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -15,12 +15,11 @@ import ru.overcode.gateway.dto.link.RuleDto;
 import ru.overcode.gateway.exception.GatewayExceptionMessage;
 import ru.overcode.gateway.exception.UnprocessableEntityException;
 import ru.overcode.gateway.exception.handler.RestExceptionHandler;
-import ru.overcode.gateway.mapper.ResponseMapper;
-import ru.overcode.gateway.service.RuleService;
+import ru.overcode.gateway.mapper.rest.ResponseMapper;
+import ru.overcode.gateway.service.rule.RuleService;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.IntStream;
@@ -51,21 +50,6 @@ public class RuleControllerTest {
     private RuleService ruleService;
 
     @Test
-    @DisplayName("GET " + RULE_URL + " - проверка контракта при валидных данных")
-    public void getRules_shouldReturnOk_whenAllDataIsValid() throws Exception {
-        final Long linkId = 1L;
-
-        doReturn(List.of(
-                new RuleDto(41L, "desc")
-        )).when(ruleService).getRules(any());
-
-        mockMvc.perform(get(RULE_URL, linkId))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data").isNotEmpty())
-                .andExpect(jsonPath("$.errors").isEmpty());
-    }
-
-    @Test
     @DisplayName("GET " + RULE_URL + " - проверка контракта при отрицательном linkId")
     public void getRules_shouldReturnBadRequest_whenLinkIdIsNegative() throws Exception {
         final Long linkId = -1L;
@@ -75,38 +59,6 @@ public class RuleControllerTest {
                 .andExpect(jsonPath("$.data").isEmpty())
                 .andExpect(jsonPath("$.errors").isNotEmpty())
                 .andExpect(jsonPath(getErrorPath("`linkId` не может быть отрицательным")).exists());
-    }
-
-    @Test
-    @DisplayName("GET " + RULE_URL + " - проверка контракта при несуществующей ссылке")
-    public void getRules_shouldReturnUnprocessableEntity_whenLinkNotFound() throws Exception {
-        final Long linkId = 1L;
-
-        doThrow(new UnprocessableEntityException(GatewayExceptionMessage.LINK_NOT_FOUND
-                .withParam("linkId", linkId.toString())))
-                .when(ruleService).getRules(any());
-
-        mockMvc.perform(get(RULE_URL, linkId))
-                .andExpect(status().isUnprocessableEntity())
-                .andExpect(jsonPath("$.data").isEmpty())
-                .andExpect(jsonPath("$.errors").isNotEmpty())
-                .andExpect(jsonPath(getErrorPath(GatewayExceptionMessage.LINK_NOT_FOUND.getMessage()
-                        .replace("{linkId}", linkId.toString()))).exists());
-    }
-
-    @Test
-    @DisplayName("GET " + RULE_URL + " - проверка контракта при непредвиденной ошибке")
-    public void getRules_shouldReturnInternalError_whenServerError() throws Exception {
-        final Long linkId = 1L;
-
-        doThrow(new RuntimeException())
-                .when(ruleService).getRules(any());
-
-        mockMvc.perform(get(RULE_URL, linkId))
-                .andExpect(status().isInternalServerError())
-                .andExpect(jsonPath("$.data").isEmpty())
-                .andExpect(jsonPath("$.errors").isNotEmpty())
-                .andExpect(jsonPath(getErrorPath(GatewayExceptionMessage.INTERNAL_SERVER.getMessage())).exists());
     }
 
     @Test

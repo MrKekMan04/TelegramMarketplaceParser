@@ -1,4 +1,4 @@
-package ru.overcode.gateway.controller;
+package ru.overcode.gateway.controller.rule;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -13,8 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.overcode.gateway.dto.link.AddRuleRequest;
 import ru.overcode.gateway.dto.link.RemoveRuleRequest;
 import ru.overcode.gateway.dto.link.RuleDto;
-import ru.overcode.gateway.service.RuleService;
-import ru.overcode.shared.api.ListResponse;
+import ru.overcode.gateway.service.rule.RuleService;
 import ru.overcode.shared.api.Response;
 
 @RestController
@@ -27,27 +26,6 @@ import ru.overcode.shared.api.Response;
 public class RuleController {
 
     private final RuleService ruleService;
-
-    @GetMapping
-    @Operation(summary = "Получить возможные правила отслеживания для ссылки")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Правила для ссылки успешно получены"),
-            @ApiResponse(responseCode = "400", description = """
-                    Ошибка валидации:
-                        - linkId - обязательный положительный параметр
-                    """),
-            @ApiResponse(responseCode = "422", description = """
-                    Ошибка данных:
-                        - ссылка не найдена
-                    """)
-    })
-    public ListResponse<RuleDto> getRules(
-            @Parameter(description = "Внутренний идентификатор ссылки")
-            @NotNull(message = "`linkId` не может быть пустым")
-            @Positive(message = "`linkId` не может быть отрицательным") @PathVariable Long linkId
-    ) {
-        return ListResponse.success(ruleService.getRules(linkId));
-    }
 
     @PostMapping
     @Operation(summary = "Добавить правило отслеживания для отслеживаемой ссылки")

@@ -1,4 +1,4 @@
-package ru.overcode.gateway.mapper;
+package ru.overcode.gateway.mapper.rest;
 
 import org.springframework.stereotype.Component;
 import ru.overcode.gateway.exception.CodeWithMessage;

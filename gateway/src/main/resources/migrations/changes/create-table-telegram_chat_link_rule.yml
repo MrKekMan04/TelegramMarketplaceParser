@@ -1,0 +1,41 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-table-telegram_chat_link_rule
+      author: MrKekMan04
+      changes:
+        - createTable:
+            tableName: telegram_chat_link_rule
+            remarks: Связка телеграм чата пользователя с правилом маркетплейса
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  remarks: Идентификатор связки
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: chat_link_id
+                  type: bigint
+                  remarks: Идентификатор связки телеграм чата с ссылкой
+                  constraints:
+                    nullable: false
+              - column:
+                  name: rule_id
+                  type: bigint
+                  remarks: Идентификатор правила
+                  constraints:
+                    nullable: false
+              - column:
+                  name: params
+                  type: jsonb
+                  remarks: Параметры правила
+
+        - createIndex:
+            indexName: telegram_chat_link_rule_chat_link_id_rule_id_idx
+            tableName: telegram_chat_link_rule
+            unique: true
+            columns:
+              - column:
+                  name: chat_link_id
+              - column:
+                  name: rule_id

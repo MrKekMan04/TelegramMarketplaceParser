@@ -1,0 +1,36 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-table-link.yml
+      author: MrKekMan04
+      changes:
+        - createTable:
+            tableName: link
+            remarks: Ссылка
+            column:
+              - column:
+                  name: id
+                  type: bigint
+                  remarks: Идентификатор ссылки
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: url
+                  type: text
+                  remarks: Адрес ссылки
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: market_id
+                  type: bigint
+                  remarks: Идентификатор маркетплейса
+                  constraints:
+                    nullable: false
+
+        - createIndex:
+            indexName: link_url_idx
+            tableName: link
+            unique: true
+            columns:
+              - column:
+                  name: url

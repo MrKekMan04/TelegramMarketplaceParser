@@ -1,4 +1,4 @@
-package ru.overcode.gateway.controller;
+package ru.overcode.gateway.controller.registration;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.overcode.gateway.dto.registration.RegistrationChatRequest;
-import ru.overcode.gateway.service.RegistrationService;
+import ru.overcode.gateway.service.registration.RegistrationService;
 import ru.overcode.shared.api.Response;
 
 @RestController

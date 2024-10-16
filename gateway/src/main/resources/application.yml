@@ -6,6 +6,8 @@ spring:
     name: gateway
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: none
   datasource:
     url: jdbc:postgresql://${DB_HOST:localhost}:5432/gateway
     username: ${DB_USERNAME:postgres}

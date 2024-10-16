@@ -1,4 +1,4 @@
-package ru.overcode.gateway.controller;
+package ru.overcode.gateway.controller.link;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -14,7 +14,7 @@ import ru.overcode.gateway.dto.link.AddLinkRequest;
 import ru.overcode.gateway.dto.link.AddLinkResponse;
 import ru.overcode.gateway.dto.link.GetLinkResponse;
 import ru.overcode.gateway.dto.link.RemoveLinkRequest;
-import ru.overcode.gateway.service.LinkService;
+import ru.overcode.gateway.service.link.LinkService;
 import ru.overcode.shared.api.ListResponse;
 import ru.overcode.shared.api.Response;
 
@@ -46,7 +46,7 @@ public class LinkController {
             @NotNull(message = "`chatId` не может быть пустым")
             @Positive(message = "`chatId` не может быть отрицательным") @RequestParam Long chatId
     ) {
-        return ListResponse.success(linkService.getLinks(chatId));
+        return ListResponse.success(linkService.getLinksWithRules(chatId));
     }
 
     @PostMapping

@@ -1,4 +1,4 @@
-package ru.overcode.gateway.controller;
+package ru.overcode.gateway.controller.registration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -13,8 +13,8 @@ import ru.overcode.gateway.dto.registration.RegistrationChatRequest;
 import ru.overcode.gateway.exception.GatewayExceptionMessage;
 import ru.overcode.gateway.exception.UnprocessableEntityException;
 import ru.overcode.gateway.exception.handler.RestExceptionHandler;
-import ru.overcode.gateway.mapper.ResponseMapper;
-import ru.overcode.gateway.service.RegistrationService;
+import ru.overcode.gateway.mapper.rest.ResponseMapper;
+import ru.overcode.gateway.service.registration.RegistrationService;
 
 import java.nio.charset.StandardCharsets;
 

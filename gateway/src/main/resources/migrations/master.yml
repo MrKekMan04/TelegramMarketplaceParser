@@ -1,3 +1,22 @@
 databaseChangeLog:
-#  - include:
-#      file: changes/change.yml
+  - include:
+      file: changes/create-table-telegram_chat.yml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/create-table-link.yml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/create-table-market.yml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/create-table-telegram_chat_link.yml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/create-table-rule.yml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/create-table-market_rule.yml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/create-table-telegram_chat_link_rule.yml
+      relativeToChangelogFile: true

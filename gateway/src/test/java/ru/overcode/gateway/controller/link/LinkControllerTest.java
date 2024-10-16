@@ -1,4 +1,4 @@
-package ru.overcode.gateway.controller;
+package ru.overcode.gateway.controller.link;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -16,8 +16,8 @@ import ru.overcode.gateway.dto.link.RemoveLinkRequest;
 import ru.overcode.gateway.exception.GatewayExceptionMessage;
 import ru.overcode.gateway.exception.UnprocessableEntityException;
 import ru.overcode.gateway.exception.handler.RestExceptionHandler;
-import ru.overcode.gateway.mapper.ResponseMapper;
-import ru.overcode.gateway.service.LinkService;
+import ru.overcode.gateway.mapper.rest.ResponseMapper;
+import ru.overcode.gateway.service.link.LinkService;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -54,7 +54,7 @@ public class LinkControllerTest {
 
         doReturn(List.of(
                 new GetLinkResponse(414L, URI.create("http://localhost:8080"), List.of())
-        )).when(linkService).getLinks(any());
+        )).when(linkService).getLinksWithRules(any());
 
         mockMvc.perform(get(LINK_URL)
                         .param("chatId", Long.toString(chatId)))
@@ -83,7 +83,7 @@ public class LinkControllerTest {
 
         doThrow(new UnprocessableEntityException(GatewayExceptionMessage.CHAT_NOT_FOUND
                 .withParam("chatId", Long.toString(chatId))))
-                .when(linkService).getLinks(any());
+                .when(linkService).getLinksWithRules(any());
 
         mockMvc.perform(get(LINK_URL)
                         .param("chatId", Long.toString(chatId)))
@@ -100,7 +100,7 @@ public class LinkControllerTest {
         final long chatId = 4123L;
 
         doThrow(new RuntimeException())
-                .when(linkService).getLinks(any());
+                .when(linkService).getLinksWithRules(any());
 
         mockMvc.perform(get(LINK_URL)
                         .param("chatId", Long.toString(chatId)))
