@@ -10,9 +10,9 @@ import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.overcode.gateway.dto.link.AddRuleRequest;
-import ru.overcode.gateway.dto.link.RemoveRuleRequest;
-import ru.overcode.gateway.dto.link.RuleDto;
+import ru.overcode.gateway.dto.rule.AddRuleRequest;
+import ru.overcode.gateway.dto.rule.RemoveRuleRequest;
+import ru.overcode.gateway.dto.rule.RuleDto;
 import ru.overcode.gateway.service.rule.RuleService;
 import ru.overcode.shared.api.Response;
 

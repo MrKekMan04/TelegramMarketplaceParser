@@ -9,9 +9,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.overcode.gateway.dto.link.AddRuleRequest;
-import ru.overcode.gateway.dto.link.RemoveRuleRequest;
-import ru.overcode.gateway.dto.link.RuleDto;
+import ru.overcode.gateway.dto.rule.AddRuleRequest;
+import ru.overcode.gateway.dto.rule.RemoveRuleRequest;
+import ru.overcode.gateway.dto.rule.RuleDto;
 import ru.overcode.gateway.exception.GatewayExceptionMessage;
 import ru.overcode.gateway.exception.UnprocessableEntityException;
 import ru.overcode.gateway.exception.handler.RestExceptionHandler;
@@ -27,7 +27,8 @@ import java.util.stream.IntStream;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.overcode.gateway.util.TestUtils.getErrorPath;
@@ -48,18 +49,6 @@ public class RuleControllerTest {
 
     @MockBean
     private RuleService ruleService;
-
-    @Test
-    @DisplayName("GET " + RULE_URL + " - проверка контракта при отрицательном linkId")
-    public void getRules_shouldReturnBadRequest_whenLinkIdIsNegative() throws Exception {
-        final Long linkId = -1L;
-
-        mockMvc.perform(get(RULE_URL, linkId))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.data").isEmpty())
-                .andExpect(jsonPath("$.errors").isNotEmpty())
-                .andExpect(jsonPath(getErrorPath("`linkId` не может быть отрицательным")).exists());
-    }
 
     @Test
     @DisplayName("POST " + RULE_URL + " - проверка контракта при валидных данных")

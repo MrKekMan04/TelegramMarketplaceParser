@@ -4,7 +4,7 @@ import org.mapstruct.Mapper;
 import ru.overcode.gateway.config.mapper.MappersConfig;
 import ru.overcode.gateway.dto.link.AddLinkResponse;
 import ru.overcode.gateway.dto.link.GetLinkResponse;
-import ru.overcode.gateway.dto.link.RuleDto;
+import ru.overcode.gateway.dto.rule.RuleDto;
 import ru.overcode.gateway.model.link.Link;
 
 import java.util.List;

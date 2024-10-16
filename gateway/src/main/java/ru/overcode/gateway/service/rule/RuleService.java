@@ -1,7 +1,7 @@
 package ru.overcode.gateway.service.rule;
 
 import org.springframework.stereotype.Service;
-import ru.overcode.gateway.dto.link.RuleDto;
+import ru.overcode.gateway.dto.rule.RuleDto;
 
 import java.util.Map;
 

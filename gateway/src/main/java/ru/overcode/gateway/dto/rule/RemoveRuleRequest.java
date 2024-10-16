@@ -1,4 +1,4 @@
-package ru.overcode.gateway.dto.link;
+package ru.overcode.gateway.dto.rule;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;

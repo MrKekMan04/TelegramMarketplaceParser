@@ -1,9 +1,9 @@
-package ru.overcode.gateway.mapper;
+package ru.overcode.gateway.mapper.rule;
 
 import org.mapstruct.Mapper;
 import ru.overcode.gateway.config.mapper.MappersConfig;
 import ru.overcode.gateway.dto.chatlink.rule.LinkRuleDto;
-import ru.overcode.gateway.dto.link.RuleDto;
+import ru.overcode.gateway.dto.rule.RuleDto;
 
 @Mapper(config = MappersConfig.class)
 public interface RuleMapper {
