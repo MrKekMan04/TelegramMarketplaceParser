@@ -11,6 +11,7 @@ databaseChangeLog:
                   name: id
                   type: bigint
                   remarks: Идентификатор связки
+                  autoIncrement: true
                   constraints:
                     primaryKey: true
               - column:
@@ -27,7 +28,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: params
-                  type: jsonb
+                  type: text
                   remarks: Параметры правила
 
         - createIndex:

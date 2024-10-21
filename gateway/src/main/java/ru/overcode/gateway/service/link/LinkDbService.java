@@ -38,7 +38,7 @@ public class LinkDbService {
     }
 
     @Transactional
-    public Link createAndSave(URI linkUrl) {
-        return null;
+    public Link save(Link link) {
+        return linkRepository.save(link);
     }
 }

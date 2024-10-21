@@ -1,8 +1,6 @@
 package ru.overcode.gateway.service.link.formatter;
 
 import org.springframework.stereotype.Service;
-import ru.overcode.gateway.exception.GatewayExceptionMessage;
-import ru.overcode.gateway.exception.UnprocessableEntityException;
 
 import java.net.URI;
 import java.util.regex.Matcher;
@@ -16,8 +14,8 @@ public class WildberriesLinkFormatter implements LinkFormatter {
             Pattern.compile("^https://www.wildberries.ru/catalog/(?<itemId>\\d+)/.*$");
 
     @Override
-    public boolean intercept(URI url) {
-        return WILDBERRIES_HOST.equalsIgnoreCase(url.getHost());
+    public String getHost() {
+        return WILDBERRIES_HOST;
     }
 
     @Override
@@ -26,7 +24,6 @@ public class WildberriesLinkFormatter implements LinkFormatter {
         if (matcher.matches()) {
             return URI.create("https://www.wildberries.ru/catalog/" + matcher.group("itemId"));
         }
-        throw new UnprocessableEntityException(GatewayExceptionMessage.LINK_NOT_SUPPORTED
-                .withParam("url", url.toString()));
+        return url;
     }
 }

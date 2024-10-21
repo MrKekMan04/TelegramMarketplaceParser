@@ -4,7 +4,7 @@ import java.net.URI;
 
 public interface LinkFormatter {
 
-    boolean intercept(URI url);
+    String getHost();
 
     URI format(URI url);
 }

@@ -21,6 +21,8 @@
         <shared.version>0.1</shared.version>
         <mapstruct.version>1.6.2</mapstruct.version>
         <testpostgresql.version>1.19.6</testpostgresql.version>
+        <hypersistence.version>3.8.3</hypersistence.version>
+        <jackson-jakarta.version>2.18.0</jackson-jakarta.version>
     </properties>
 
     <dependencies>
