@@ -104,7 +104,6 @@ public class LinkService {
         telegramChatLinkRuleDbService.deleteAllByChatLinkId(binding.getId());
     }
 
-    @Transactional
     public void throwIfNotExists(Long linkId) {
         linkDbService.findById(linkId)
                 .orElseThrow(() -> new UnprocessableEntityException(GatewayExceptionMessage.LINK_NOT_FOUND
