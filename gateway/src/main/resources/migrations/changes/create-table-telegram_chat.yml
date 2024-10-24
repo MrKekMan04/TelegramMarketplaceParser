@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-table-telegram_chat
+      author: MrKekMan04
+      changes:
+        - createTable:
+            tableName: telegram_chat
+            remarks: Телеграм чат пользователя
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  remarks: Идентификатор телеграмм чата
+                  constraints:
+                    primaryKey: true

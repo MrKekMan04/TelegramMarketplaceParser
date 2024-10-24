@@ -1,0 +1,38 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-table-market_rule
+      author: MrKekMan04
+      changes:
+        - createTable:
+            tableName: market_rule
+            remarks: Связка маркетплейса с правилом
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  remarks: Идентификатор связки
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: market_id
+                  type: bigint
+                  remarks: Идентификатор маркетплейса
+                  constraints:
+                    nullable: false
+              - column:
+                  name: rule_id
+                  type: bigint
+                  remarks: Идентификатор правила
+                  constraints:
+                    nullable: false
+
+        - createIndex:
+            indexName: market_rule_market_id_rule_id_idx
+            tableName: market_rule
+            unique: true
+            columns:
+              - column:
+                  name: market_id
+              - column:
+                  name: rule_id
