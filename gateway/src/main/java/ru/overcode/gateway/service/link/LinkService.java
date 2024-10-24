@@ -94,19 +94,23 @@ public class LinkService {
     @Transactional
     public void removeLink(Long chatId, Long linkId) {
         telegramChatService.throwIfNotExists(chatId);
-        this.throwIfNotExists(linkId);
+        this.getLinkOrThrow(linkId);
 
-        TelegramChatLink binding = telegramChatLinkDbService.findByChatIdAndLinkId(chatId, linkId)
-                .orElseThrow(() -> new UnprocessableEntityException(GatewayExceptionMessage.LINK_NOT_ADDED
-                        .withParam("linkId", linkId.toString())));
+        TelegramChatLink binding = getBindingOrThrow(chatId, linkId);
 
         telegramChatLinkDbService.deleteById(binding.getId());
         telegramChatLinkRuleDbService.deleteAllByChatLinkId(binding.getId());
     }
 
-    public void throwIfNotExists(Long linkId) {
-        linkDbService.findById(linkId)
+    public Link getLinkOrThrow(Long linkId) {
+        return linkDbService.findById(linkId)
                 .orElseThrow(() -> new UnprocessableEntityException(GatewayExceptionMessage.LINK_NOT_FOUND
+                        .withParam("linkId", linkId.toString())));
+    }
+
+    public TelegramChatLink getBindingOrThrow(Long chatId, Long linkId) {
+        return telegramChatLinkDbService.findByChatIdAndLinkId(chatId, linkId)
+                .orElseThrow(() -> new UnprocessableEntityException(GatewayExceptionMessage.LINK_NOT_ADDED
                         .withParam("linkId", linkId.toString())));
     }
 }

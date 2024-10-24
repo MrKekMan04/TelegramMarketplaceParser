@@ -10,14 +10,17 @@ import ru.overcode.gateway.model.chatlink.TelegramChatLink;
 import ru.overcode.gateway.model.chatlink.rule.TelegramChatLinkRule;
 import ru.overcode.gateway.model.link.Link;
 import ru.overcode.gateway.model.market.Market;
+import ru.overcode.gateway.model.marketrule.MarketRule;
 import ru.overcode.gateway.model.rule.Rule;
 import ru.overcode.gateway.model.telegramchat.TelegramChat;
 import ru.overcode.gateway.repository.chatlink.TelegramChatLinkRepository;
 import ru.overcode.gateway.repository.chatlink.rule.TelegramChatLinkRuleRepository;
 import ru.overcode.gateway.repository.link.LinkRepository;
 import ru.overcode.gateway.repository.market.MarketRepository;
+import ru.overcode.gateway.repository.marketrule.MarketRuleRepository;
 import ru.overcode.gateway.repository.rule.RuleRepository;
 import ru.overcode.gateway.repository.telegramchat.TelegramChatRepository;
+import ru.overcode.gateway.service.rule.RuleDbService;
 
 import java.net.URI;
 import java.util.Map;
@@ -38,6 +41,10 @@ public abstract class BaseIntegrationTest {
     protected RuleRepository ruleRepository;
     @Autowired
     protected TelegramChatLinkRuleRepository bindingRuleRepository;
+    @Autowired
+    protected MarketRuleRepository marketRuleRepository;
+    @Autowired
+    private RuleDbService ruleDbService;
 
     protected void createTelegramChat(Long chatId) {
         telegramChatRepository.save(new TelegramChat()
@@ -45,9 +52,13 @@ public abstract class BaseIntegrationTest {
     }
 
     protected Link createLink(URI url) {
+        return createLink(url, RandomUtils.nextLong());
+    }
+
+    protected Link createLink(URI url, Long marketId) {
         return linkRepository.save(new Link()
                 .setUrl(url)
-                .setMarketId(RandomUtils.nextLong()));
+                .setMarketId(marketId));
     }
 
     protected TelegramChatLink createBinding(Long chatId, Long linkId) {
@@ -68,10 +79,24 @@ public abstract class BaseIntegrationTest {
                 .setDescription(RandomStringUtils.randomAlphabetic(5)));
     }
 
+    protected void createRule(Long ruleId) {
+        ruleDbService.saveWithId(
+                ruleId,
+                RandomStringUtils.randomAlphabetic(5),
+                RandomStringUtils.randomAlphabetic(5)
+        );
+    }
+
     protected TelegramChatLinkRule createBindingRule(Long bindingId, Long ruleId, Map<String, String> params) {
         return bindingRuleRepository.save(new TelegramChatLinkRule()
                 .setChatLinkId(bindingId)
                 .setRuleId(ruleId)
                 .setParams(params));
+    }
+
+    protected void createMarketRule(Long marketId, Long ruleId) {
+        marketRuleRepository.save(new MarketRule()
+                .setMarketId(marketId)
+                .setRuleId(ruleId));
     }
 }

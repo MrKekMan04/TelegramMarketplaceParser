@@ -1,6 +1,7 @@
 package ru.overcode.gateway.repository.rule;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import ru.overcode.gateway.dto.chatlink.rule.LinkRuleDto;
@@ -23,4 +24,22 @@ public interface RuleRepository extends JpaRepository<Rule, Long> {
             where tcl.chatId = :chatId and tcl.linkId in :linkIds
             """)
     List<LinkRuleDto> findAllByChatIdAndLinkIdIn(Long chatId, Collection<Long> linkIds);
+
+    @Query("""
+            select r from Link l
+            join MarketRule mr on mr.marketId = l.marketId
+            join Rule r on r.id = mr.ruleId
+            where l.id = :linkId
+            """)
+    List<Rule> findAllByLinkId(Long linkId);
+
+    /**
+     * Только для тестов
+     */
+    @Modifying
+    @Query(value = """
+            insert into rule (id, name, description)
+            values (:id, :name, :description)
+            """, nativeQuery = true)
+    void saveWithId(Long id, String name, String description);
 }

@@ -16,7 +16,7 @@ public class MarketDbService {
 
     private final MarketRepository marketRepository;
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Map<String, Market> findAll() {
         return marketRepository.findAll().stream()
                 .collect(Collectors.toMap(

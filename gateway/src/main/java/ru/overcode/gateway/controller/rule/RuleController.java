@@ -11,9 +11,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.overcode.gateway.dto.rule.AddRuleRequest;
+import ru.overcode.gateway.dto.rule.GetRulesResponse;
 import ru.overcode.gateway.dto.rule.RemoveRuleRequest;
 import ru.overcode.gateway.dto.rule.RuleDto;
 import ru.overcode.gateway.service.rule.RuleService;
+import ru.overcode.shared.api.ListResponse;
 import ru.overcode.shared.api.Response;
 
 @RestController
@@ -26,6 +28,27 @@ import ru.overcode.shared.api.Response;
 public class RuleController {
 
     private final RuleService ruleService;
+
+    @GetMapping
+    @Operation(summary = "Получить правила отслеживания для ссылки")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Правила для ссылки успешно получены"),
+            @ApiResponse(responseCode = "400", description = """
+                    Ошибка валидации:
+                        - linkId - обязательный положительный параметр
+                    """),
+            @ApiResponse(responseCode = "422", description = """
+                    Ошибка данных:
+                        - ссылка не найдена
+                    """)
+    })
+    public ListResponse<GetRulesResponse> getRules(
+            @Parameter(description = "Внутренний идентификатор ссылки")
+            @NotNull(message = "`linkId` не может быть пустым")
+            @Positive(message = "`linkId` не может быть отрицательным") @PathVariable Long linkId
+    ) {
+        return ListResponse.success(ruleService.getRules(linkId));
+    }
 
     @PostMapping
     @Operation(summary = "Добавить правило отслеживания для отслеживаемой ссылки")

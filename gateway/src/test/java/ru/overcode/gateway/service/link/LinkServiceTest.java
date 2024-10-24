@@ -1,4 +1,4 @@
-package ru.overcode.gateway.link;
+package ru.overcode.gateway.service.link;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,7 +15,6 @@ import ru.overcode.gateway.model.chatlink.rule.TelegramChatLinkRule;
 import ru.overcode.gateway.model.link.Link;
 import ru.overcode.gateway.model.market.Market;
 import ru.overcode.gateway.model.rule.Rule;
-import ru.overcode.gateway.service.link.LinkService;
 
 import java.net.URI;
 import java.util.Comparator;
