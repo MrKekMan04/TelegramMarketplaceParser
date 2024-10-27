@@ -1,7 +1,7 @@
 # Telegram Marketplace Parser
 
 ![Bot](https://github.com/MrKekMan04/TelegramMarketplaceParser/actions/workflows/bot.yml/badge.svg)
-![Scrapper](https://github.com/MrKekMan04/TelegramMarketplaceParser/actions/workflows/gateway.yml/badge.svg)
+![Gateway](https://github.com/MrKekMan04/TelegramMarketplaceParser/actions/workflows/gateway.yml/badge.svg)
 ![Scrapper](https://github.com/MrKekMan04/TelegramMarketplaceParser/actions/workflows/scrapper.yml/badge.svg)
 
 Сервис для отслеживания маркетплейсов по правилам при помощи телеграмм бота
