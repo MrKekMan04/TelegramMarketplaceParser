@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.overcode.gateway.exception.GatewayExceptionMessage;
 import ru.overcode.gateway.exception.UnprocessableEntityException;
-import ru.overcode.gateway.mapper.ResponseMapper;
+import ru.overcode.gateway.mapper.rest.ResponseMapper;
 import ru.overcode.shared.api.Response;
 
 import java.util.List;

@@ -1,0 +1,38 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-table-telegram_chat_link
+      author: MrKekMan04
+      changes:
+        - createTable:
+            tableName: telegram_chat_link
+            remarks: Связка ссылки и телеграм чата пользователя
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  remarks: Идентификатор связки
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: chat_id
+                  type: bigint
+                  remarks: Идентификатор телеграм чата
+                  constraints:
+                    nullable: false
+              - column:
+                  name: link_id
+                  type: bigint
+                  remarks: Идентификатор ссылки
+                  constraints:
+                    nullable: false
+
+        - createIndex:
+            indexName: telegram_chat_link_chat_id_link_id_idx
+            tableName: telegram_chat_link
+            unique: true
+            columns:
+              - column:
+                  name: chat_id
+              - column:
+                  name: link_id

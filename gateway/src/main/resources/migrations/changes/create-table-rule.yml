@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-table-rule
+      author: MrKekMan04
+      changes:
+        - createTable:
+            tableName: rule
+            remarks: Правило
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  remarks: Идентификатор правила
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: text
+                  remarks: Имя правила
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: description
+                  type: text
+                  remarks: Описание правила
+                  constraints:
+                    nullable: false

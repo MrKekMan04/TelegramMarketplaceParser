@@ -1,6 +1,7 @@
 package ru.overcode.gateway.dto.link;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import ru.overcode.gateway.dto.rule.RuleDto;
 
 import java.net.URI;
 import java.util.List;
