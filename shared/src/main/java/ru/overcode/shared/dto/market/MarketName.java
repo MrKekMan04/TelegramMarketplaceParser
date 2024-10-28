@@ -1,4 +1,4 @@
-package ru.overcode.gateway.dto.market;
+package ru.overcode.shared.dto.market;
 
 public enum MarketName {
 

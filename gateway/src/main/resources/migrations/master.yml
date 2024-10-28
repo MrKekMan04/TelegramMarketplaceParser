@@ -20,3 +20,9 @@ databaseChangeLog:
   - include:
       file: changes/create-table-telegram_chat_link_rule.yml
       relativeToChangelogFile: true
+  - include:
+      file: changes/create-table-link_outbox.yml
+      relativeToChangelogFile: true
+  - include:
+      file: changes/create-table-telegram_chat_link_rule_outbox.yml
+      relativeToChangelogFile: true

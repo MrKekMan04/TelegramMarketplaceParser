@@ -27,7 +27,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class LinkServiceTest extends BaseIntegrationTest {
 
-    private final String LINK_PREFIX = "https://www.host.com/link";
+    private static final String LINK_PREFIX = "https://www.wildberries.ru/catalog/1";
+
     @Autowired
     private LinkService linkService;
 

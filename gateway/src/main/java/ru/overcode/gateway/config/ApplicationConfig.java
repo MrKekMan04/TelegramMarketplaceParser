@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class ApplicationConfig {
 
     @Bean
-    public Map<String, LinkFormatter> linkFormatters(List<LinkFormatter> formatters) {
+    public Map<String, LinkFormatter> linkFormattersByHost(List<LinkFormatter> formatters) {
         return formatters.stream()
                 .collect(Collectors.toMap(
                         LinkFormatter::getHost,
@@ -23,7 +23,7 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public Map<Long, RuleParamsValidator> ruleParamsValidators(List<RuleParamsValidator> validators) {
+    public Map<Long, RuleParamsValidator> ruleParamsValidatorsByRuleId(List<RuleParamsValidator> validators) {
         return validators.stream()
                 .collect(Collectors.toMap(
                         RuleParamsValidator::getRuleId,

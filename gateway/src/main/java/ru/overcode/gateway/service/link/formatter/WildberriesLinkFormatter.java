@@ -11,7 +11,7 @@ public class WildberriesLinkFormatter implements LinkFormatter {
 
     private static final String WILDBERRIES_HOST = "www.wildberries.ru";
     private static final Pattern WILDBERRIES_PATTERN =
-            Pattern.compile("^https://www.wildberries.ru/catalog/(?<itemId>\\d+)/.*$");
+            Pattern.compile("^https://www\\.wildberries\\.ru/catalog/(?<itemId>\\d+)(/.*)?$");
 
     @Override
     public String getHost() {
@@ -24,6 +24,6 @@ public class WildberriesLinkFormatter implements LinkFormatter {
         if (matcher.matches()) {
             return URI.create("https://www.wildberries.ru/catalog/" + matcher.group("itemId"));
         }
-        return url;
+        return null;
     }
 }

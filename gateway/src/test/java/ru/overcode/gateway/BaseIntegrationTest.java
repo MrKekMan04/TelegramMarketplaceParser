@@ -2,10 +2,15 @@ package ru.overcode.gateway;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.jdbc.Sql;
+import org.testcontainers.containers.KafkaContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomUtils;
-import ru.overcode.gateway.dto.market.MarketName;
+import org.testcontainers.utility.DockerImageName;
 import ru.overcode.gateway.model.chatlink.TelegramChatLink;
 import ru.overcode.gateway.model.chatlink.rule.TelegramChatLinkRule;
 import ru.overcode.gateway.model.link.Link;
@@ -21,13 +26,26 @@ import ru.overcode.gateway.repository.marketrule.MarketRuleRepository;
 import ru.overcode.gateway.repository.rule.RuleRepository;
 import ru.overcode.gateway.repository.telegramchat.TelegramChatRepository;
 import ru.overcode.gateway.service.rule.RuleDbService;
+import ru.overcode.shared.dto.market.MarketName;
 
 import java.net.URI;
 import java.util.Map;
 
+@Testcontainers
 @SpringBootTest
 @Sql(scripts = "/clean.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 public abstract class BaseIntegrationTest {
+
+    @Container
+    public static final KafkaContainer KAFKA =
+            new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.6.1"))
+                    .withReuse(true);
+
+    @DynamicPropertySource
+    public static void configureKafka(DynamicPropertyRegistry registry) {
+        registry.add("kafka.bootstrap-servers", KAFKA::getBootstrapServers);
+        registry.add("spring.kafka.bootstrap-servers", KAFKA::getBootstrapServers);
+    }
 
     @Autowired
     protected TelegramChatRepository telegramChatRepository;

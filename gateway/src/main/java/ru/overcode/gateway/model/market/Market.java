@@ -3,7 +3,7 @@ package ru.overcode.gateway.model.market;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import ru.overcode.gateway.dto.market.MarketName;
+import ru.overcode.shared.dto.market.MarketName;
 
 /**
  * Маркетплейс
