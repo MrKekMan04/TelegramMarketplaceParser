@@ -13,11 +13,15 @@ import ru.overcode.gateway.exception.UnprocessableEntityException;
 import ru.overcode.gateway.model.chatlink.TelegramChatLink;
 import ru.overcode.gateway.model.chatlink.rule.TelegramChatLinkRule;
 import ru.overcode.gateway.model.link.Link;
+import ru.overcode.gateway.model.link.LinkOutbox;
 import ru.overcode.gateway.model.market.Market;
 import ru.overcode.gateway.model.rule.Rule;
+import ru.overcode.shared.dto.event.OutboxEventType;
+import ru.overcode.shared.dto.event.ProcessType;
 
 import java.net.URI;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.IntStream;
@@ -27,7 +31,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class LinkServiceTest extends BaseIntegrationTest {
 
-    private final String LINK_PREFIX = "https://www.host.com/link";
+    private static final String LINK_PREFIX = "https://www.wildberries.ru/catalog/1";
+
     @Autowired
     private LinkService linkService;
 
@@ -89,7 +94,10 @@ public class LinkServiceTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Ссылка добавляется в отслеживаемые")
+    @DisplayName("""
+            Ссылка добавляется в отслеживаемые.
+            Также реплицируется в outbox, если до этого не была отправлена
+            """)
     public void addLink_shouldAdd_whenAllDataIsValid() {
         Long chatId = RandomUtils.nextLong();
 
@@ -106,6 +114,11 @@ public class LinkServiceTest extends BaseIntegrationTest {
         Optional<TelegramChatLink> optionalBinding = bindingRepository
                 .findByChatIdAndLinkId(chatId, response.linkId());
         assertTrue(optionalBinding.isPresent());
+
+        List<LinkOutbox> optionalOutbox = linkOutboxRepository.findAllByLinkId(optionalLink.get().getId());
+        assertEquals(1, optionalOutbox.size());
+        assertEquals(ProcessType.PENDING, optionalOutbox.getFirst().getProcessType());
+        assertEquals(OutboxEventType.UPSERT, optionalOutbox.getFirst().getEventType());
     }
 
     @Test

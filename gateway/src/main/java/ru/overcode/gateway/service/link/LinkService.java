@@ -1,6 +1,7 @@
 package ru.overcode.gateway.service.link;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.overcode.gateway.dto.chatlink.rule.LinkRuleDto;
@@ -21,6 +22,8 @@ import ru.overcode.gateway.service.link.formatter.LinkFormatter;
 import ru.overcode.gateway.service.market.MarketDbService;
 import ru.overcode.gateway.service.rule.RuleDbService;
 import ru.overcode.gateway.service.telegramchat.TelegramChatService;
+import ru.overcode.shared.dto.event.OutboxEventType;
+import ru.overcode.shared.dto.market.MarketName;
 
 import java.net.URI;
 import java.util.List;
@@ -32,11 +35,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class LinkService {
 
+    @Qualifier("linkFormattersByHost")
     private final Map<String, LinkFormatter> linkFormattersByHost;
     private final TelegramChatService telegramChatService;
     private final TelegramChatLinkDbService telegramChatLinkDbService;
     private final TelegramChatLinkRuleDbService telegramChatLinkRuleDbService;
     private final LinkDbService linkDbService;
+    private final LinkOutboxDbService linkOutboxDbService;
     private final RuleDbService ruleDbService;
     private final MarketDbService marketDbService;
     private final TelegramChatLinkMapper telegramChatLinkMapper;
@@ -73,12 +78,13 @@ public class LinkService {
 
         URI url = Optional.ofNullable(linkFormattersByHost.get(linkHost))
                 .map(formatter -> formatter.format(linkUrl))
-                .orElse(linkUrl);
+                .orElseThrow(() -> new UnprocessableEntityException(GatewayExceptionMessage.LINK_NOT_SUPPORTED
+                        .withParam("url", linkUrl.toString())));
 
         telegramChatService.throwIfNotExists(chatId);
 
         Link link = linkDbService.findByUrl(url)
-                .orElseGet(() -> linkDbService.save(linkMapper.toLink(url, market.getId())));
+                .orElseGet(() -> saveAndReplicate(url, market.getId(), market.getName()));
 
         telegramChatLinkDbService.findByChatIdAndLinkId(chatId, link.getId())
                 .ifPresent(ignore -> {
@@ -112,5 +118,11 @@ public class LinkService {
         return telegramChatLinkDbService.findByChatIdAndLinkId(chatId, linkId)
                 .orElseThrow(() -> new UnprocessableEntityException(GatewayExceptionMessage.LINK_NOT_ADDED
                         .withParam("linkId", linkId.toString())));
+    }
+
+    private Link saveAndReplicate(URI url, Long marketId, MarketName marketName) {
+        Link link = linkDbService.save(linkMapper.toLink(url, marketId));
+        linkOutboxDbService.save(linkMapper.toOutbox(link, marketName, OutboxEventType.UPSERT));
+        return link;
     }
 }

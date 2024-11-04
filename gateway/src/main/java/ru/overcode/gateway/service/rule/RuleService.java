@@ -1,6 +1,7 @@
 package ru.overcode.gateway.service.rule;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.overcode.gateway.dto.rule.GetRulesResponse;
@@ -11,16 +12,20 @@ import ru.overcode.gateway.mapper.chatlink.rule.TelegramChatLinkRuleMapper;
 import ru.overcode.gateway.mapper.rule.RuleMapper;
 import ru.overcode.gateway.model.chatlink.TelegramChatLink;
 import ru.overcode.gateway.model.chatlink.rule.TelegramChatLinkRule;
+import ru.overcode.gateway.model.chatlink.rule.TelegramChatLinkRuleOutbox;
 import ru.overcode.gateway.model.link.Link;
 import ru.overcode.gateway.model.rule.Rule;
 import ru.overcode.gateway.service.chatlink.rule.TelegramChatLinkRuleDbService;
+import ru.overcode.gateway.service.chatlink.rule.TelegramChatLinkRuleOutboxDbService;
 import ru.overcode.gateway.service.link.LinkService;
 import ru.overcode.gateway.service.marketrule.MarketRuleDbService;
 import ru.overcode.gateway.service.rule.param.RuleParamsValidator;
 import ru.overcode.gateway.service.telegramchat.TelegramChatService;
+import ru.overcode.shared.dto.event.OutboxEventType;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,9 +34,11 @@ public class RuleService {
 
     private final RuleDbService ruleDbService;
     private final TelegramChatLinkRuleDbService bindingRuleDbService;
+    private final TelegramChatLinkRuleOutboxDbService outboxRuleDbService;
     private final TelegramChatService telegramChatService;
     private final LinkService linkService;
     private final MarketRuleDbService marketRuleDbService;
+    @Qualifier("ruleParamsValidatorsByRuleId")
     private final Map<Long, RuleParamsValidator> ruleParamsValidators;
     private final TelegramChatLinkRuleMapper bindingRuleMapper;
     private final RuleMapper ruleMapper;
@@ -81,11 +88,12 @@ public class RuleService {
                             .withParam("ruleId", ruleId.toString()));
                 });
 
-        TelegramChatLinkRule bindingRule = bindingRuleDbService.save(bindingRuleMapper.toBindingRule(
-                binding.getId(),
+        TelegramChatLinkRule bindingRule = saveAndReplicateBindingRule(
+                binding,
                 ruleId,
-                ruleMapper.fetchValidParams(paramsValidator.getParamNames(), ruleParams)
-        ));
+                paramsValidator.getParamNames(),
+                ruleParams
+        );
 
         return new RuleDto(ruleId, paramsValidator.getRuleName(rule.getName(), bindingRule.getParams()));
     }
@@ -107,11 +115,34 @@ public class RuleService {
                 .orElseThrow(() -> new UnprocessableEntityException(GatewayExceptionMessage.RULE_NOT_ADDED
                         .withParam("ruleId", ruleId.toString())));
 
-        bindingRuleDbService.deleteById(bindingRule.getId());
+        removeBindingRule(bindingRule.getId());
     }
 
     private UnprocessableEntityException getNotFoundException(Long ruleId) {
         return new UnprocessableEntityException(GatewayExceptionMessage.RULE_NOT_FOUND
                 .withParam("ruleId", ruleId.toString()));
+    }
+
+    private TelegramChatLinkRule saveAndReplicateBindingRule(
+            TelegramChatLink binding,
+            Long ruleId,
+            Set<String> validParamNames,
+            Map<String, String> ruleParams
+    ) {
+        TelegramChatLinkRule bindingRule = bindingRuleDbService.save(bindingRuleMapper.toBindingRule(
+                binding.getId(),
+                ruleId,
+                ruleMapper.fetchValidParams(validParamNames, ruleParams)
+        ));
+        outboxRuleDbService.save(bindingRuleMapper
+                .toOutbox(bindingRule, binding.getLinkId(), ruleId, OutboxEventType.UPSERT));
+        return bindingRule;
+    }
+
+    private void removeBindingRule(Long id) {
+        bindingRuleDbService.deleteById(id);
+        outboxRuleDbService.save(new TelegramChatLinkRuleOutbox()
+                .setTelegramChatLinkRuleId(id)
+                .setEventType(OutboxEventType.REMOVE));
     }
 }

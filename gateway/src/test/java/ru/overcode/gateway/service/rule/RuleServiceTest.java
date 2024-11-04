@@ -10,8 +10,11 @@ import ru.overcode.gateway.dto.rule.GetRulesResponse;
 import ru.overcode.gateway.exception.UnprocessableEntityException;
 import ru.overcode.gateway.model.chatlink.TelegramChatLink;
 import ru.overcode.gateway.model.chatlink.rule.TelegramChatLinkRule;
+import ru.overcode.gateway.model.chatlink.rule.TelegramChatLinkRuleOutbox;
 import ru.overcode.gateway.model.link.Link;
 import ru.overcode.gateway.model.market.Market;
+import ru.overcode.shared.dto.event.OutboxEventType;
+import ru.overcode.shared.dto.event.ProcessType;
 
 import java.net.URI;
 import java.util.Comparator;
@@ -63,7 +66,10 @@ public class RuleServiceTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Правило добавляется в отслеживаемые")
+    @DisplayName("""
+            Правило добавляется в отслеживаемые.
+            Также реплицируется в outbox
+            """)
     public void addRule_shouldAdd_whenAllDataIsValid() {
         URI url = URI.create(URL);
         Long chatId = RandomUtils.nextLong();
@@ -80,6 +86,12 @@ public class RuleServiceTest extends BaseIntegrationTest {
         Optional<TelegramChatLinkRule> optionalBindingRule = bindingRuleRepository
                 .findByChatLinkIdAndRuleId(binding.getId(), ruleId);
         assertTrue(optionalBindingRule.isPresent());
+
+        List<TelegramChatLinkRuleOutbox> optionalOutbox =
+                bindingRuleOutboxRepository.findAllByTelegramChatLinkRuleId(optionalBindingRule.get().getId());
+        assertEquals(1, optionalOutbox.size());
+        assertEquals(ProcessType.PENDING, optionalOutbox.getFirst().getProcessType());
+        assertEquals(OutboxEventType.UPSERT, optionalOutbox.getFirst().getEventType());
     }
 
     @Test
@@ -203,7 +215,10 @@ public class RuleServiceTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Правило удаляется из отслеживаемых")
+    @DisplayName("""
+            Правило удаляется из отслеживаемых.
+            Также реплицируется в outbox
+            """)
     public void removeRule_shouldRemove_whenAllDataIsValid() {
         Long chatId = RandomUtils.nextLong();
         Long ruleId = 1L;
@@ -217,6 +232,12 @@ public class RuleServiceTest extends BaseIntegrationTest {
 
         Optional<TelegramChatLinkRule> optionalBindingRule = bindingRuleRepository.findById(bindingRule.getId());
         assertFalse(optionalBindingRule.isPresent());
+
+        List<TelegramChatLinkRuleOutbox> optionalOutbox =
+                bindingRuleOutboxRepository.findAllByTelegramChatLinkRuleId(bindingRule.getId());
+        assertEquals(1, optionalOutbox.size());
+        assertEquals(ProcessType.PENDING, optionalOutbox.getFirst().getProcessType());
+        assertEquals(OutboxEventType.REMOVE, optionalOutbox.getFirst().getEventType());
     }
 
     @Test

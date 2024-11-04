@@ -20,3 +20,22 @@ springdoc:
     enabled: false
   swagger-ui:
     enabled: false
+
+kafka:
+  bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092,localhost:9093,localhost:9094}
+  producers:
+    link-outbox:
+      topic: gateway.link.outbox
+      partitions: 2
+      replicas: 2
+    link-rule-outbox:
+      topic: gateway.link-rule.outbox
+      partitions: 2
+      replicas: 2
+
+schedule:
+  tasks:
+    link-outbox:
+      cron: '0 * * * * *' # every minute
+    link-rule-outbox:
+      cron: '0 * * * * *' # every minute

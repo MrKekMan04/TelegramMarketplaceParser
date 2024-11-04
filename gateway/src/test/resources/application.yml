@@ -9,3 +9,22 @@ spring:
   liquibase:
     enabled: true
     change-log: classpath:migrations/master.yml
+
+kafka:
+  bootstrap-servers:
+  producers:
+    link-outbox:
+      topic: gateway.link.outbox
+      partitions: 1
+      replicas: 1
+    link-rule-outbox:
+      topic: gateway.link-rule.outbox
+      partitions: 1
+      replicas: 1
+
+schedule:
+  tasks:
+    link-outbox:
+      cron: '-'
+    link-rule-outbox:
+      cron: '-'

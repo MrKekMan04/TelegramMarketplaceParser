@@ -1,0 +1,49 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-table-link_outbox
+      author: MrKekMan04
+      changes:
+        - createTable:
+            tableName: link_outbox
+            remarks: Изменения ссылок
+            column:
+              - column:
+                  name: id
+                  type: bigint
+                  remarks: Идентификатор изменения
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: link_id
+                  type: bigint
+                  remarks: Идентификатор ссылки
+                  constraints:
+                    nullable: false
+              - column:
+                  name: link_url
+                  type: text
+                  remarks: Адрес ссылки
+              - column:
+                  name: market_name
+                  type: text
+                  remarks: Наименование маркетплейса
+              - column:
+                  name: event_type
+                  type: text
+                  remarks: Тип события
+                  constraints:
+                    nullable: false
+              - column:
+                  name: process_type
+                  type: text
+                  remarks: Тип обработки события
+                  constraints:
+                    nullable: false
+
+        - createIndex:
+            indexName: link_outbox_process_type_idx
+            tableName: link_outbox
+            columns:
+              - column:
+                  name: process_type
