@@ -21,4 +21,10 @@ public interface TelegramChatLinkRuleOutboxRepository extends JpaRepository<Tele
             where o.id = :id
             """)
     void setProcessType(Long id, ProcessType processType);
+
+    /**
+     * Только для тестов
+     * !!! Нет индекса !!!
+     */
+    List<TelegramChatLinkRuleOutbox> findAllByTelegramChatLinkRuleId(Long telegramChatLinkRuleId);
 }

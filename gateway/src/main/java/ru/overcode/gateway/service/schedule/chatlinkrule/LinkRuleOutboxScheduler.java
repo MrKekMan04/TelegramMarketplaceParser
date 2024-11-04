@@ -13,14 +13,14 @@ public class LinkRuleOutboxScheduler {
 
     public static final String LINK_RULE_OUTBOX_TASK = "linkRuleOutboxTask";
 
-    private final LinkRuleOutboxProcessor linkOutboxProcessor;
+    private final LinkRuleOutboxProcessor linkRuleOutboxProcessor;
 
     @Scheduled(cron = "${schedule.tasks.link-rule-outbox.cron}")
     @SchedulerLock(name = LINK_RULE_OUTBOX_TASK)
-    public void sendLinkOutbox() {
+    public void sendLinkRuleOutbox() {
         log.info("Start {}", LINK_RULE_OUTBOX_TASK);
         try {
-            linkOutboxProcessor.process();
+            linkRuleOutboxProcessor.process();
             log.info("End {}", LINK_RULE_OUTBOX_TASK);
         } catch (Exception e) {
             log.error("Error while processing {}", LINK_RULE_OUTBOX_TASK, e);

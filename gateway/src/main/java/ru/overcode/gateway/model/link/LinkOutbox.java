@@ -3,6 +3,7 @@ package ru.overcode.gateway.model.link;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import ru.overcode.gateway.config.converter.UriConverter;
 import ru.overcode.shared.dto.event.OutboxEventType;
 import ru.overcode.shared.dto.event.ProcessType;
 import ru.overcode.shared.dto.market.MarketName;
@@ -33,6 +34,7 @@ public class LinkOutbox {
     /**
      * Адрес ссылки
      */
+    @Convert(converter = UriConverter.class)
     private URI linkUrl;
 
     /**

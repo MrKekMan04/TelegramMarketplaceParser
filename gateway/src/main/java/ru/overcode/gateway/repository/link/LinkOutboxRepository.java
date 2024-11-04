@@ -21,4 +21,10 @@ public interface LinkOutboxRepository extends JpaRepository<LinkOutbox, Long> {
             where lo.id = :id
             """)
     void setProcessType(Long id, ProcessType processType);
+
+    /**
+     * Только для тестов
+     * !!! Нет индекса !!!
+     */
+    List<LinkOutbox> findAllByLinkId(Long linkId);
 }

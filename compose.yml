@@ -86,7 +86,7 @@ services:
     depends_on:
       - postgresql-gateway
     command:
-      - --changelog-file=master.xml
+      - --changelog-file=master.yml
       - --driver=org.postgresql.Driver
       - --url=jdbc:postgresql://postgresql-gateway:5432/gateway
       - --username=postgres
