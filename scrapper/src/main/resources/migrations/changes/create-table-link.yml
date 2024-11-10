@@ -1,0 +1,35 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-table-link
+      author: QuenbKing
+      changes:
+        - createTable:
+            tableName: link
+            remarks: Ссылка
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  remarks: Индектификатор ссылки
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: url
+                  type: text
+                  remarks: Адрес ссылки
+                  constraints:
+                    nullable: false
+              - column:
+                  name: market_name
+                  type: text
+                  remarks: Имя маркетплейса
+                  constraints:
+                    nullable: false
+
+        - createIndex:
+            indexName: link_market_name_idx
+            tableName: link
+            columns:
+              - column:
+                  name: market_name

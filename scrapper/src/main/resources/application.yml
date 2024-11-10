@@ -6,9 +6,21 @@ spring:
     name: scrapper
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: none
   datasource:
     url: jdbc:postgresql://${DB_HOST:localhost}:5432/scrapper
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:postgres}
   liquibase:
     enabled: ${MIGRATIONS_ENABLED:false}
+
+kafka:
+  bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092,localhost:9093,localhost:9094}
+  consumers:
+    link-outbox:
+      topic: gateway.link.outbox
+      group-id: gateway-link-outbox-scrapper
+    link-rule-outbox:
+      topic: gateway.link-rule.outbox
+      group-id: gateway-link-rule-outbox-scrapper
