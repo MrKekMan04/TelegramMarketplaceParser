@@ -2,6 +2,8 @@ server:
   port: 8080
 
 spring:
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092,localhost:9093,localhost:9094}
   application:
     name: gateway
   jpa:
@@ -22,7 +24,7 @@ springdoc:
     enabled: false
 
 kafka:
-  bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092,localhost:9093,localhost:9094}
+  bootstrap-servers: ${spring.kafka.bootstrap-servers}
   producers:
     link-outbox:
       topic: gateway.link.outbox

@@ -5,3 +5,5 @@ truncate table link;
 truncate table market;
 truncate table rule;
 truncate table telegram_chat;
+truncate table link_outbox;
+truncate table telegram_chat_link_rule_outbox;
