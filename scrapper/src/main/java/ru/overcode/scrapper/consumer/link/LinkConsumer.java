@@ -22,12 +22,12 @@ public class LinkConsumer {
             containerFactory = "linkOutboxKafkaListenerContainerFactory"
     )
     public void handleLinkOutboxDto(List<LinkOutboxDto> linkOutboxDtos) {
+        log.info("Links have been received {}", linkOutboxDtos);
         try {
-            log.info("Links have been received {}", linkOutboxDtos);
             linkProcessor.process(linkOutboxDtos);
-            log.info("Received links were successfully processed");
+            log.info("Received links were successfully processed {}", linkOutboxDtos);
         } catch (Exception exception) {
-            log.error("Error occurred while processing links", exception);
+            log.error("Error occurred while processing links {}", linkOutboxDtos, exception);
         }
     }
 }

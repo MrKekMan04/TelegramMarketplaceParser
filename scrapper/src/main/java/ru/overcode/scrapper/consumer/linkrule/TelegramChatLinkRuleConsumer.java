@@ -22,12 +22,12 @@ public class TelegramChatLinkRuleConsumer {
             containerFactory = "linkRuleOutboxKafkaListenerContainerFactory"
     )
     public void handleLinkRuleOutboxDto(List<LinkRuleOutboxDto> linkRuleOutboxDtos) {
+        log.info("Link rules have been received {}", linkRuleOutboxDtos);
         try {
-            log.info("Link rules have been received {}", linkRuleOutboxDtos);
             telegramChatLinkRuleProcessor.process(linkRuleOutboxDtos);
-            log.info("Received link rules were successfully processed");
+            log.info("Received link rules were successfully processed {}", linkRuleOutboxDtos);
         } catch (Exception exception) {
-            log.error("Error occurred while processing link rules", exception);
+            log.error("Error occurred while processing link rules {}", linkRuleOutboxDtos, exception);
         }
     }
 }
