@@ -3,6 +3,7 @@ package ru.overcode.scrapper.service.linkrule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import ru.overcode.scrapper.model.linkrule.TelegramChatLinkRule;
 import ru.overcode.scrapper.repository.linkrule.TelegramChatLinkRuleRepository;
 
@@ -25,11 +26,17 @@ public class TelegramChatLinkRuleDbService {
 
     @Transactional
     public void deleteAllByIdInBatch(Collection<Long> telegramChatLinkRuleIds) {
+        if (CollectionUtils.isEmpty(telegramChatLinkRuleIds)) {
+            return;
+        }
         telegramChatLinkRuleRepository.deleteAllByIdInBatch(telegramChatLinkRuleIds);
     }
 
     @Transactional(readOnly = true)
     public Map<Long, TelegramChatLinkRule> findAllById(Collection<Long> telegramChatLinkRuleIds) {
+        if (CollectionUtils.isEmpty(telegramChatLinkRuleIds)) {
+            return Map.of();
+        }
         return telegramChatLinkRuleRepository.findAllById(telegramChatLinkRuleIds).stream()
                 .collect(Collectors.toMap(
                         TelegramChatLinkRule::getId,

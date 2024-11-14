@@ -19,8 +19,8 @@ public class LinkProcessor {
         Map<OutboxEventType, List<LinkOutboxDto>> groupedLinks = linkOutboxDtos.stream()
                 .collect(Collectors.groupingBy(LinkOutboxDto::eventType));
 
-        List<LinkOutboxDto> upsertLinks = groupedLinks.get(OutboxEventType.UPSERT);
-        List<LinkOutboxDto> removeLinks = groupedLinks.get(OutboxEventType.REMOVE);
+        List<LinkOutboxDto> upsertLinks = groupedLinks.getOrDefault(OutboxEventType.UPSERT, List.of());
+        List<LinkOutboxDto> removeLinks = groupedLinks.getOrDefault(OutboxEventType.REMOVE, List.of());
 
         linkService.upsertLinks(upsertLinks);
         linkService.deleteLinks(removeLinks);

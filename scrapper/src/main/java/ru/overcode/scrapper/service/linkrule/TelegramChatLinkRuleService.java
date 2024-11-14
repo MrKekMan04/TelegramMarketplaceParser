@@ -31,7 +31,7 @@ public class TelegramChatLinkRuleService {
         Map<Long, TelegramChatLinkRule> existingEntities = telegramChatLinkRuleDbService.findAllById(dtoById.keySet());
 
         List<TelegramChatLinkRule> telegramChatLinkRules = dtoById.keySet().stream()
-                .map(id -> existingEntities.getOrDefault(id, new TelegramChatLinkRule()))
+                .map(id -> existingEntities.getOrDefault(id, new TelegramChatLinkRule().setId(id)))
                 .peek(bindingRule -> telegramChatLinkRuleMapper
                         .fillTelegramChatLinkRule(bindingRule, dtoById.get(bindingRule.getId())))
                 .toList();

@@ -19,8 +19,8 @@ public class TelegramChatLinkRuleProcessor {
         Map<OutboxEventType, List<LinkRuleOutboxDto>> groupedLinkRules = linkRuleOutboxDtos.stream()
                 .collect(Collectors.groupingBy(LinkRuleOutboxDto::eventType));
 
-        List<LinkRuleOutboxDto> upsertLinkRules = groupedLinkRules.get(OutboxEventType.UPSERT);
-        List<LinkRuleOutboxDto> removeLinkRules = groupedLinkRules.get(OutboxEventType.REMOVE);
+        List<LinkRuleOutboxDto> upsertLinkRules = groupedLinkRules.getOrDefault(OutboxEventType.UPSERT, List.of());
+        List<LinkRuleOutboxDto> removeLinkRules = groupedLinkRules.getOrDefault(OutboxEventType.REMOVE, List.of());
 
         telegramChatLinkRuleService.upsertLinkRules(upsertLinkRules);
         telegramChatLinkRuleService.deleteLinkRules(removeLinkRules);

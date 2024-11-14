@@ -31,7 +31,7 @@ public class LinkService {
         Map<Long, Link> existingEntities = linkDbService.findAllById(dtoById.keySet());
 
         List<Link> links = dtoById.keySet().stream()
-                .map(id -> existingEntities.getOrDefault(id, new Link()))
+                .map(id -> existingEntities.getOrDefault(id, new Link().setId(id)))
                 .peek(link -> linkMapper.fillLink(link, dtoById.get(link.getId())))
                 .toList();
 

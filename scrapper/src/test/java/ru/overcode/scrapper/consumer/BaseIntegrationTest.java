@@ -9,9 +9,15 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.utility.DockerImageName;
-import ru.overcode.scrapper.config.kafka.KafkaConfig;
+import ru.overcode.scrapper.consumer.config.KafkaConfig;
+import ru.overcode.scrapper.model.link.Link;
+import ru.overcode.scrapper.model.linkrule.TelegramChatLinkRule;
 import ru.overcode.scrapper.repository.link.LinkRepository;
 import ru.overcode.scrapper.repository.linkrule.TelegramChatLinkRuleRepository;
+import ru.overcode.shared.dto.market.MarketName;
+
+import java.net.URI;
+import java.util.Map;
 
 @SpringBootTest
 @Import(KafkaConfig.class)
@@ -37,4 +43,19 @@ public class BaseIntegrationTest {
 
     @Autowired
     protected TelegramChatLinkRuleRepository telegramChatLinkRuleRepository;
+
+    protected void createLink(Long id, URI url) {
+        linkRepository.save(new Link()
+                .setId(id)
+                .setUrl(url)
+                .setMarketName(MarketName.WILDBERRIES));
+    }
+
+    protected void createLinkRule(Long id, Long linkId, Long ruleId, Map<String, String> params) {
+        telegramChatLinkRuleRepository.save(new TelegramChatLinkRule()
+                .setId(id)
+                .setLinkId(linkId)
+                .setRuleId(ruleId)
+                .setParams(params));
+    }
 }
