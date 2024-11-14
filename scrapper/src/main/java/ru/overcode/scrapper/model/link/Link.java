@@ -15,7 +15,6 @@ import java.net.URI;
 public class Link {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Convert(converter = UriConverter.class)

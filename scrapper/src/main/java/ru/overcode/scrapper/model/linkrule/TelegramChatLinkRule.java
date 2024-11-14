@@ -1,6 +1,9 @@
 package ru.overcode.scrapper.model.linkrule;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import ru.overcode.scrapper.config.converter.RuleParamsConverter;
@@ -14,7 +17,6 @@ import java.util.Map;
 public class TelegramChatLinkRule {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private Long linkId;

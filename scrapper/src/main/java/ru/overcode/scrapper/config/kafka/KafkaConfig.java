@@ -24,13 +24,13 @@ public class KafkaConfig {
     private final KafkaProperties kafkaProperties;
 
     @Bean
-    public ConsumerFactory<String, LinkOutboxDto> linkOutboxConsumerFactory() {
+    public ConsumerFactory<Long, LinkOutboxDto> linkOutboxConsumerFactory() {
         return new DefaultKafkaConsumerFactory<>(getConsumerConfig(LinkOutboxDto.class));
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, LinkOutboxDto> linkOutboxKafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, LinkOutboxDto> factory =
+    public ConcurrentKafkaListenerContainerFactory<Long, LinkOutboxDto> linkOutboxKafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<Long, LinkOutboxDto> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(linkOutboxConsumerFactory());
         factory.setBatchListener(true);
@@ -38,13 +38,13 @@ public class KafkaConfig {
     }
 
     @Bean
-    public ConsumerFactory<String, LinkRuleOutboxDto> linkRuleOutboxConsumerFactory() {
+    public ConsumerFactory<Long, LinkRuleOutboxDto> linkRuleOutboxConsumerFactory() {
         return new DefaultKafkaConsumerFactory<>(getConsumerConfig(LinkRuleOutboxDto.class));
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, LinkRuleOutboxDto> linkRuleOutboxKafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, LinkRuleOutboxDto> factory =
+    public ConcurrentKafkaListenerContainerFactory<Long, LinkRuleOutboxDto> linkRuleOutboxKafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<Long, LinkRuleOutboxDto> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(linkRuleOutboxConsumerFactory());
         factory.setBatchListener(true);

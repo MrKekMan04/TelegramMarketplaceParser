@@ -1,0 +1,21 @@
+spring:
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: none
+  datasource:
+    url: jdbc:tc:postgresql:15:///scrapper
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+  liquibase:
+    enabled: true
+    change-log: classpath:migrations/master.yml
+
+kafka:
+  bootstrap-servers:
+  consumers:
+    link-outbox:
+      topic: gateway.link.outbox
+      group-id: gateway-link-outbox-scrapper
+    link-rule-outbox:
+      topic: gateway.link-rule.outbox
+      group-id: gateway-link-rule-outbox-scrapper
