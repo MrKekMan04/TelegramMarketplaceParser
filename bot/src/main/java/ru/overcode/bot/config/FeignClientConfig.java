@@ -8,5 +8,4 @@ import org.springframework.context.annotation.Configuration;
 @EnableFeignClients
 @EnableConfigurationProperties(ApplicationConfig.class)
 public class FeignClientConfig {
-
 }

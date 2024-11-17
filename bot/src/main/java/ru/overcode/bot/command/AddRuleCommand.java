@@ -11,7 +11,9 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class AddRuleCommand implements Command {
     private static final String COMMAND_NAME = "/add-rule";
-    private static final String COMMAND_DESCRIPTION = "Привязать правило отслеживания для ссылки\n" + "params: без пробелов";
+    private static final String COMMAND_DESCRIPTION = """
+            Привязать правило отслеживания для ссылки
+            params: без пробелов. Разделитель - "=", перечисление через ";". Пример: price=132;some=fefaefd""";
 
     @Override
     public String command() {

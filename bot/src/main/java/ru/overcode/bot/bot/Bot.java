@@ -18,7 +18,7 @@ import java.util.List;
 public class Bot extends TelegramBot {
     private final List<Command> commands;
 
-    public Bot(ApplicationConfig config, List<Command> commands) {//
+    public Bot(ApplicationConfig config, List<Command> commands) {
         super(config.telegramToken());
 
         this.commands = commands;
@@ -33,32 +33,30 @@ public class Bot extends TelegramBot {
     }
 
     private int onTelegramUpdateReceived(List<Update> updates) {
-        updates.forEach(update -> {
-            if (update.message() != null) {
-                Long chatId = update.message().chat().id();
-                String message = update.message().text();
+        updates.stream()
+                .filter(update -> update.message() != null)
+                .forEach(update -> {
+                    Long chatId = update.message().chat().id();
+                    String message = update.message().text();
 
-                if (message.startsWith("/")) {
-                    processCommandMessage(update, chatId, message);
-                } else {
-                    processNonCommandMessage(chatId, message);
-                }
-            }
-        });
+                    SendMessage responseMessage = message.startsWith("/")
+                            ? processCommandMessage(update, chatId, message)
+                            : processNonCommandMessage(chatId, message);
+
+                    execute(responseMessage);
+                });
 
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }
 
-    private void processCommandMessage(Update update, Long chatId, String message) {
+    private SendMessage processCommandMessage(Update update, Long chatId, String message) {
         log.info("[Chat id: {}] process command: {}", chatId, message);
 
-        SendMessage responseMessage = commands.stream()
+        return commands.stream()
                 .filter(command -> isCommandMatched(message, command.command()))
                 .findFirst()
                 .map(command -> command.handle(update))
                 .orElse(new SendMessage(chatId, "Неизвестная команда. Доступные команды: /help"));
-
-        execute(responseMessage);
     }
 
     private boolean isCommandMatched(String message, String command) {
@@ -66,8 +64,8 @@ public class Bot extends TelegramBot {
                 && (message.length() == command.length() || message.charAt(command.length()) == ' ');
     }
 
-    private void processNonCommandMessage(Long chatId, String message) {
+    private SendMessage processNonCommandMessage(Long chatId, String message) {
         log.info("[Chat id: {}] process text: {}", chatId, message);
-        execute(new SendMessage(chatId, "Введите команду. Доступные команды: /help"));
+        return new SendMessage(chatId, "Введите команду. Доступные команды: /add-link, /add-rule, /get-links, /get-rules, /remove-rule, /remove-link");
     }
 }
