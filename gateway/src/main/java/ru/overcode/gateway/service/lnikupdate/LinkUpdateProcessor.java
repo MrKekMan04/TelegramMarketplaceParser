@@ -34,7 +34,7 @@ public class LinkUpdateProcessor {
     @Qualifier("ruleParamsValidatorsByRuleId")
     private final Map<Long, RuleParamsValidator> ruleParamsValidators;
 
-    @Transactional
+    @Transactional(readOnly = true)
     public void process(ScrapperLinkUpdateDto record) {
         TelegramChatLinkRule bindingRule = getBindingRule(record.id());
         if (bindingRule == null) {
