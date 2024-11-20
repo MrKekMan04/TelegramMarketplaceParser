@@ -16,6 +16,7 @@ import org.springframework.kafka.core.*;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
+import ru.overcode.gateway.config.kafka.consumer.ConsumerProperties;
 import ru.overcode.shared.stream.LinkOutboxDto;
 import ru.overcode.shared.stream.LinkRuleOutboxDto;
 import ru.overcode.shared.stream.update.GatewayLinkUpdateDto;
@@ -60,7 +61,8 @@ public class KafkaConfig {
 
     @Bean
     public ConsumerFactory<Long, ScrapperLinkUpdateDto> linkUpdateConsumerFactory() {
-        return new DefaultKafkaConsumerFactory<>(getBaseConsumerConfig(ScrapperLinkUpdateDto.class));
+        ConsumerProperties properties = kafkaProperties.getConsumers().getLinkUpdate();
+        return new DefaultKafkaConsumerFactory<>(getBaseConsumerConfig(ScrapperLinkUpdateDto.class, properties));
     }
 
     @Bean
@@ -109,13 +111,16 @@ public class KafkaConfig {
         );
     }
 
-    private Map<String, Object> getBaseConsumerConfig(Class<?> valueDefaultType) {
+    private Map<String, Object> getBaseConsumerConfig(Class<?> valueDefaultType, ConsumerProperties props) {
         return Map.of(
                 ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaProperties.getBootstrapServers(),
                 ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, LongDeserializer.class,
                 ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class,
                 ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class,
-                JsonDeserializer.VALUE_DEFAULT_TYPE, valueDefaultType
+                JsonDeserializer.VALUE_DEFAULT_TYPE, valueDefaultType,
+                ConsumerConfig.MAX_POLL_RECORDS_CONFIG, props.getMaxPollRecords(),
+                ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, props.getEnableAutoCommit(),
+                ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, props.getMaxPollIntervalMs()
         );
     }
 }

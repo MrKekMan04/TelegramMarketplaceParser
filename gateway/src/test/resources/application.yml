@@ -30,6 +30,9 @@ kafka:
       topic: scrapper.link.update
       group-id: scrapper-link-update-gateway
       enable: true
+      max-poll-records: 1
+      enable-auto-commit: false
+      max-poll-interval-ms: 100
 
 schedule:
   tasks:
