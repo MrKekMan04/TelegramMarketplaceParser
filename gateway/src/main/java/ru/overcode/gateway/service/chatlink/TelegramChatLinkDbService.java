@@ -28,4 +28,9 @@ public class TelegramChatLinkDbService {
     public void deleteById(Long id) {
         telegramChatLinkRepository.deleteById(id);
     }
+
+    @Transactional(readOnly = true)
+    public Optional<TelegramChatLink> findById(Long bindingId) {
+        return telegramChatLinkRepository.findById(bindingId);
+    }
 }

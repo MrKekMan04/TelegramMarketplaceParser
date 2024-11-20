@@ -21,6 +21,15 @@ kafka:
       topic: gateway.link-rule.outbox
       partitions: 1
       replicas: 1
+    link-update:
+      topic: gateway.link.update
+      partitions: 2
+      replicas: 2
+  consumers:
+    link-update:
+      topic: scrapper.link.update
+      group-id: scrapper-link-update-gateway
+      enable: true
 
 schedule:
   tasks:

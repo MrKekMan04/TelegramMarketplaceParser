@@ -3,13 +3,15 @@ package ru.overcode.gateway;
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.jdbc.Sql;
-import org.testcontainers.containers.KafkaContainer;
+import org.testcontainers.kafka.ConfluentKafkaContainer;
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomUtils;
 import org.testcontainers.utility.DockerImageName;
+import ru.overcode.gateway.config.KafkaTestConfig;
 import ru.overcode.gateway.model.chatlink.TelegramChatLink;
 import ru.overcode.gateway.model.chatlink.rule.TelegramChatLinkRule;
 import ru.overcode.gateway.model.chatlink.rule.TelegramChatLinkRuleOutbox;
@@ -36,11 +38,12 @@ import java.net.URI;
 import java.util.Map;
 
 @SpringBootTest
+@Import({KafkaTestConfig.class})
 @Sql(scripts = "/clean.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 public abstract class BaseIntegrationTest {
 
-    public static final KafkaContainer KAFKA =
-            new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.6.1"))
+    public static final ConfluentKafkaContainer KAFKA =
+            new ConfluentKafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.6.1"))
                     .withReuse(true);
 
     @BeforeAll
@@ -109,9 +112,13 @@ public abstract class BaseIntegrationTest {
     }
 
     protected void createRule(Long ruleId) {
+        createRule(ruleId, RandomStringUtils.randomAlphabetic(5));
+    }
+
+    protected void createRule(Long ruleId, String ruleName) {
         ruleDbService.saveWithId(
                 ruleId,
-                RandomStringUtils.randomAlphabetic(5),
+                ruleName,
                 RandomStringUtils.randomAlphabetic(5)
         );
     }

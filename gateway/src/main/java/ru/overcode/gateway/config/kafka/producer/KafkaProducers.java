@@ -10,4 +10,6 @@ public class KafkaProducers {
     private ProducerProperties linkOutbox;
 
     private ProducerProperties linkRuleOutbox;
+
+    private ProducerProperties linkUpdate;
 }

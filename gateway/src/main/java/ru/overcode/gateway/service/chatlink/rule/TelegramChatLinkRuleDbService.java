@@ -33,4 +33,9 @@ public class TelegramChatLinkRuleDbService {
     public void deleteById(Long bindingRuleId) {
         telegramChatLinkRuleRepository.deleteById(bindingRuleId);
     }
+
+    @Transactional(readOnly = true)
+    public Optional<TelegramChatLinkRule> findById(Long bindingRuleId) {
+        return telegramChatLinkRuleRepository.findById(bindingRuleId);
+    }
 }
