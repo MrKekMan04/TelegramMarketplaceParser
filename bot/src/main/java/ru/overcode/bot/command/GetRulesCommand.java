@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class GetRulesCommand implements Command {
+
     private static final String COMMAND_NAME = "/get-rules";
     private static final String COMMAND_DESCRIPTION = "Получить список возможных правил отслеживания для ссылки";
 

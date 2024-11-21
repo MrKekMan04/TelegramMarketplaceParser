@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class RemoveRuleCommand implements Command {
+
     private static final String COMMAND_NAME = "/remove-rule";
     private static final String COMMAND_DESCRIPTION = "Отвязать правило отслеживания для ссылки";
 

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class RemoveLinkCommand implements Command {
+
     private static final String COMMAND_NAME = "/remove-link";
     private static final String COMMAND_DESCRIPTION = "Удалить ссылку из отслеживаемых";
 

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class AddRuleCommand implements Command {
+
     private static final String COMMAND_NAME = "/add-rule";
     private static final String COMMAND_DESCRIPTION = """
             Привязать правило отслеживания для ссылки

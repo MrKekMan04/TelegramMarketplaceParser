@@ -12,15 +12,21 @@ import ru.overcode.bot.command.Command;
 import ru.overcode.bot.config.ApplicationConfig;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
 public class Bot extends TelegramBot {
+
     private final List<Command> commands;
+    private final String commandNames;
 
     public Bot(ApplicationConfig config, List<Command> commands) {
         super(config.telegramToken());
 
+        this.commandNames = commands.stream()
+                .map(Command::command)
+                .collect(Collectors.joining(", "));
         this.commands = commands;
         this.setUpMenuCommands();
         this.setUpdatesListener(this::onTelegramUpdateReceived);
@@ -56,7 +62,7 @@ public class Bot extends TelegramBot {
                 .filter(command -> isCommandMatched(message, command.command()))
                 .findFirst()
                 .map(command -> command.handle(update))
-                .orElse(new SendMessage(chatId, "Неизвестная команда. Доступные команды: /help"));
+                .orElse(new SendMessage(chatId, "Неизвестная команда. Доступные команды: " + commandNames));
     }
 
     private boolean isCommandMatched(String message, String command) {
@@ -66,6 +72,6 @@ public class Bot extends TelegramBot {
 
     private SendMessage processNonCommandMessage(Long chatId, String message) {
         log.info("[Chat id: {}] process text: {}", chatId, message);
-        return new SendMessage(chatId, "Введите команду. Доступные команды: /add-link, /add-rule, /get-links, /get-rules, /remove-rule, /remove-link");
+        return new SendMessage(chatId, "Введите команду. Доступные команды: " + commandNames);
     }
 }

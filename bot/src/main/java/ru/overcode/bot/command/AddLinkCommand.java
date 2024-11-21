@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class AddLinkCommand implements Command {
+
     private static final String COMMAND_NAME = "/add-link";
     private static final String COMMAND_DESCRIPTION = "Добавить ссылку в отслеживаемые";
 

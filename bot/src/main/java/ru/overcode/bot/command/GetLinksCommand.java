@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class GetLinksCommand implements Command {
+
     private static final String COMMAND_NAME = "/start";
     private static final String COMMAND_DESCRIPTION = "Зарегистрировать пользователя";
 
