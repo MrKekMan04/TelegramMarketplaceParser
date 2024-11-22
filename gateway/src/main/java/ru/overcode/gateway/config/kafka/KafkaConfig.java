@@ -2,24 +2,32 @@ package ru.overcode.gateway.config.kafka;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.serialization.LongDeserializer;
 import org.apache.kafka.common.serialization.LongSerializer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.annotation.EnableKafka;
+import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.config.TopicBuilder;
-import org.springframework.kafka.core.DefaultKafkaProducerFactory;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.core.ProducerFactory;
+import org.springframework.kafka.core.*;
+import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
+import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
+import ru.overcode.gateway.config.kafka.consumer.ConsumerProperties;
 import ru.overcode.shared.stream.LinkOutboxDto;
 import ru.overcode.shared.stream.LinkRuleOutboxDto;
+import ru.overcode.shared.stream.update.GatewayLinkUpdateDto;
+import ru.overcode.shared.stream.update.ScrapperLinkUpdateDto;
 
 import java.util.Map;
 
 @Configuration
 @RequiredArgsConstructor
 @EnableConfigurationProperties(KafkaProperties.class)
+@EnableKafka
 public class KafkaConfig {
 
     private final KafkaProperties kafkaProperties;
@@ -43,8 +51,31 @@ public class KafkaConfig {
     }
 
     @Bean
+    public NewTopic linkUpdateTopic() {
+        return TopicBuilder
+                .name(kafkaProperties.getProducers().getLinkUpdate().getTopic())
+                .partitions(kafkaProperties.getProducers().getLinkUpdate().getPartitions())
+                .replicas(kafkaProperties.getProducers().getLinkUpdate().getReplicas())
+                .build();
+    }
+
+    @Bean
+    public ConsumerFactory<Long, ScrapperLinkUpdateDto> linkUpdateConsumerFactory() {
+        ConsumerProperties properties = kafkaProperties.getConsumers().getLinkUpdate();
+        return new DefaultKafkaConsumerFactory<>(getBaseConsumerConfig(ScrapperLinkUpdateDto.class, properties));
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<Long, ScrapperLinkUpdateDto> linkUpdateContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<Long, ScrapperLinkUpdateDto> listener
+                = new ConcurrentKafkaListenerContainerFactory<>();
+        listener.setConsumerFactory(linkUpdateConsumerFactory());
+        return listener;
+    }
+
+    @Bean
     public ProducerFactory<Long, LinkOutboxDto> linkOutboxProducerFactory() {
-        return new DefaultKafkaProducerFactory<>(getBaseConfig());
+        return new DefaultKafkaProducerFactory<>(getBaseProducerConfig());
     }
 
     @Bean
@@ -54,7 +85,7 @@ public class KafkaConfig {
 
     @Bean
     public ProducerFactory<Long, LinkRuleOutboxDto> linkRuleOutboxProducerFactory() {
-        return new DefaultKafkaProducerFactory<>(getBaseConfig());
+        return new DefaultKafkaProducerFactory<>(getBaseProducerConfig());
     }
 
     @Bean
@@ -62,11 +93,34 @@ public class KafkaConfig {
         return new KafkaTemplate<>(linkRuleOutboxProducerFactory());
     }
 
-    private Map<String, Object> getBaseConfig() {
+    @Bean
+    public ProducerFactory<Long, GatewayLinkUpdateDto> linkUpdateProducerFactory() {
+        return new DefaultKafkaProducerFactory<>(getBaseProducerConfig());
+    }
+
+    @Bean
+    public KafkaTemplate<Long, GatewayLinkUpdateDto> linkUpdateKafkaTemplate() {
+        return new KafkaTemplate<>(linkUpdateProducerFactory());
+    }
+
+    private Map<String, Object> getBaseProducerConfig() {
         return Map.of(
                 ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaProperties.getBootstrapServers(),
                 ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, LongSerializer.class,
                 ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class
+        );
+    }
+
+    private Map<String, Object> getBaseConsumerConfig(Class<?> valueDefaultType, ConsumerProperties props) {
+        return Map.of(
+                ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaProperties.getBootstrapServers(),
+                ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, LongDeserializer.class,
+                ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class,
+                ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class,
+                JsonDeserializer.VALUE_DEFAULT_TYPE, valueDefaultType,
+                ConsumerConfig.MAX_POLL_RECORDS_CONFIG, props.getMaxPollRecords(),
+                ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, props.getEnableAutoCommit(),
+                ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, props.getMaxPollIntervalMs()
         );
     }
 }

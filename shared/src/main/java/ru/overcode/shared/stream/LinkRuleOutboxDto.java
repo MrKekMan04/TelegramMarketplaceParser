@@ -11,4 +11,5 @@ public record LinkRuleOutboxDto(
         Map<String, String> params,
         OutboxEventType eventType
 ) {
+
 }
