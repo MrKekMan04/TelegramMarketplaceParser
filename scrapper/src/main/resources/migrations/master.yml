@@ -5,3 +5,6 @@ databaseChangeLog:
   - include:
       file: changes/create-table-telegram_chat_link_rule.yml
       relativeToChangelogFile: true
+  - include:
+      file: changes/create-table-shedlock.yml
+      relativeToChangelogFile: true

@@ -24,3 +24,24 @@ kafka:
     link-rule-outbox:
       topic: gateway.link-rule.outbox
       group-id: gateway-link-rule-outbox-scrapper
+  producers:
+    link-update:
+      topic: scrapper.link.update
+      partitions: 2
+      replicas: 2
+
+schedule:
+  tasks:
+    link:
+      cron: '0 0 */6 * * *' # every 6 hours
+
+feign:
+  wildberries:
+    link:
+      batch-size: 50
+    rule:
+      batch-size: 100
+    api:
+      url: https://card.wb.ru
+      dest: -5818883
+      curr: rub

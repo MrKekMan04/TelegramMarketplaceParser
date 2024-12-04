@@ -1,4 +1,4 @@
-package ru.overcode.scrapper.consumer;
+package ru.overcode.scrapper;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +9,7 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.utility.DockerImageName;
-import ru.overcode.scrapper.consumer.config.KafkaConfig;
+import ru.overcode.scrapper.config.KafkaConfig;
 import ru.overcode.scrapper.model.link.Link;
 import ru.overcode.scrapper.model.linkrule.TelegramChatLinkRule;
 import ru.overcode.scrapper.repository.link.LinkRepository;

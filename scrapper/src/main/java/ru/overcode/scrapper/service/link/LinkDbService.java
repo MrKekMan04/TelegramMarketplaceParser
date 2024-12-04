@@ -1,11 +1,14 @@
 package ru.overcode.scrapper.service.link;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import ru.overcode.scrapper.model.link.Link;
 import ru.overcode.scrapper.repository.link.LinkRepository;
+import ru.overcode.shared.dto.market.MarketName;
 
 import java.util.Collection;
 import java.util.List;
@@ -42,5 +45,10 @@ public class LinkDbService {
                         Link::getId,
                         Function.identity()
                 ));
+    }
+
+    @Transactional(readOnly = true)
+    public Slice<Link> findLinksByMarketName(MarketName marketName, Pageable pageable) {
+        return linkRepository.findLinksByMarketName(marketName, pageable);
     }
 }

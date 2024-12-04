@@ -19,3 +19,24 @@ kafka:
     link-rule-outbox:
       topic: gateway.link-rule.outbox
       group-id: gateway-link-rule-outbox-scrapper
+  producers:
+    link-update:
+      topic: scrapper.link.update
+      partitions: 2
+      replicas: 2
+
+schedule:
+  tasks:
+    link:
+      cron: '-'
+
+feign:
+  wildberries:
+    link:
+      batch-size: 50
+    rule:
+      batch-size: 100
+    api:
+      url: http://localhost:8081
+      dest: -5818883
+      curr: rub
