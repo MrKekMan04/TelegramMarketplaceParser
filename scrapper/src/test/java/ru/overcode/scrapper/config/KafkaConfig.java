@@ -1,4 +1,4 @@
-package ru.overcode.scrapper.consumer.config;
+package ru.overcode.scrapper.config;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.LongSerializer;
@@ -8,7 +8,7 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
-import ru.overcode.scrapper.consumer.BaseIntegrationTest;
+import ru.overcode.scrapper.BaseIntegrationTest;
 import ru.overcode.shared.stream.LinkOutboxDto;
 import ru.overcode.shared.stream.LinkRuleOutboxDto;
 

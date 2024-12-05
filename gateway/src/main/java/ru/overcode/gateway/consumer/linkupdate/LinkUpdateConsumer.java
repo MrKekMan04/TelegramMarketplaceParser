@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import ru.overcode.gateway.exception.KafkaProcessingException;
-import ru.overcode.gateway.service.lnikupdate.LinkUpdateProcessor;
+import ru.overcode.gateway.service.linkupdate.LinkUpdateProcessor;
 import ru.overcode.shared.stream.update.ScrapperLinkUpdateDto;
 
 @Slf4j

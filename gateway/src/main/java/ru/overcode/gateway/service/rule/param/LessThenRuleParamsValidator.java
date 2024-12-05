@@ -2,6 +2,7 @@ package ru.overcode.gateway.service.rule.param;
 
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Set;
 
@@ -35,7 +36,7 @@ public class LessThenRuleParamsValidator implements RuleParamsValidator {
 
     private boolean isValidNumber(String number) {
         try {
-            return Long.parseLong(number) > 0;
+            return new BigDecimal(number).compareTo(BigDecimal.ZERO) > 0;
         } catch (NumberFormatException e) {
             return false;
         }

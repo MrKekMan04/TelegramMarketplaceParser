@@ -1,6 +1,8 @@
 package ru.overcode.scrapper.service.linkrule;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -42,5 +44,10 @@ public class TelegramChatLinkRuleDbService {
                         TelegramChatLinkRule::getId,
                         Function.identity()
                 ));
+    }
+
+    @Transactional(readOnly = true)
+    public Slice<TelegramChatLinkRule> findTelegramChatLinkRulesByLinkId(Long linkId, Pageable pageable) {
+        return telegramChatLinkRuleRepository.findTelegramChatLinkRulesByLinkId(linkId, pageable);
     }
 }

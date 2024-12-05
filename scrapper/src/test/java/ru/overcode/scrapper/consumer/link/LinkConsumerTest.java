@@ -4,7 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomUtils;
-import ru.overcode.scrapper.consumer.BaseIntegrationTest;
+import ru.overcode.scrapper.BaseIntegrationTest;
 import ru.overcode.scrapper.model.link.Link;
 import ru.overcode.shared.dto.event.OutboxEventType;
 import ru.overcode.shared.dto.market.MarketName;

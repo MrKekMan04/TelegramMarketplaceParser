@@ -11,7 +11,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomUtils;
 import org.testcontainers.shaded.org.awaitility.Awaitility;
 import ru.overcode.gateway.BaseIntegrationTest;
-import ru.overcode.gateway.service.lnikupdate.LinkUpdateProcessor;
+import ru.overcode.gateway.service.linkupdate.LinkUpdateProcessor;
 import ru.overcode.shared.stream.update.ScrapperLinkUpdateDto;
 
 import java.util.concurrent.TimeUnit;

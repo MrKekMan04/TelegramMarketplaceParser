@@ -1,6 +1,8 @@
 package ru.overcode.scrapper.service.linkrule;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.overcode.scrapper.mapper.linkrule.TelegramChatLinkRuleMapper;
@@ -39,12 +41,15 @@ public class TelegramChatLinkRuleService {
         telegramChatLinkRuleDbService.saveAll(telegramChatLinkRules);
     }
 
-    @Transactional
     public void deleteLinkRules(List<LinkRuleOutboxDto> linkRuleOutboxDtos) {
         Set<Long> ids = linkRuleOutboxDtos.stream()
                 .map(LinkRuleOutboxDto::id)
                 .collect(Collectors.toSet());
 
         telegramChatLinkRuleDbService.deleteAllByIdInBatch(ids);
+    }
+
+    public Slice<TelegramChatLinkRule> findTelegramChatLinkRulesByLinkId(Long linkId, Pageable pageable) {
+        return telegramChatLinkRuleDbService.findTelegramChatLinkRulesByLinkId(linkId, pageable);
     }
 }

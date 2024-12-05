@@ -11,7 +11,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomUtils;
 import org.testcontainers.shaded.org.awaitility.Awaitility;
-import ru.overcode.scrapper.consumer.BaseIntegrationTest;
+import ru.overcode.scrapper.BaseIntegrationTest;
 import ru.overcode.scrapper.service.linkrule.TelegramChatLinkRuleProcessor;
 import ru.overcode.shared.dto.event.OutboxEventType;
 import ru.overcode.shared.stream.LinkRuleOutboxDto;
