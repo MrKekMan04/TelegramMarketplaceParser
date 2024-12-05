@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 
 @Slf4j
 @Component(LinkScheduler.LINK_TASK)
@@ -17,6 +18,7 @@ public class LinkScheduler {
     public static final String LINK_TASK = "linkTask";
 
     private final List<MarketplaceProcessor> marketplaceProcessors;
+    private final ExecutorService virtualThreadPool;
 
     @Scheduled(cron = "${schedule.tasks.link.cron}")
     @SchedulerLock(name = LINK_TASK)
@@ -24,7 +26,7 @@ public class LinkScheduler {
         log.info("Start {}", LINK_TASK);
         try {
             CompletableFuture.allOf(marketplaceProcessors.stream()
-                            .map(processor -> CompletableFuture.runAsync(() -> processMarketplace(processor)))
+                            .map(processor -> CompletableFuture.runAsync(() -> processMarketplace(processor), virtualThreadPool))
                             .toArray(CompletableFuture[]::new))
                     .join();
 
