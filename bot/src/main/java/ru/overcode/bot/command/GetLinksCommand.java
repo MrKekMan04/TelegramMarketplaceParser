@@ -5,7 +5,10 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.overcode.bot.config.feign.linkclient.LinkFeignClient;
+import ru.overcode.bot.config.feign.link.LinkFeignClient;
+import ru.overcode.bot.dto.link.GetLinkResponse;
+
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -31,8 +34,7 @@ public class GetLinksCommand implements Command {
         Chat chat = update.message().chat();
         Long chatId = update.message().chat().id();
 
-        //List<GetLinkResponse> data = linkFeignClient.getLinks(chatId).getData();
-        var data ="2";
+        List<GetLinkResponse> data = linkFeignClient.getLinks(chatId).getData();
         return new SendMessage(chat.id(), data.toString());
     }
 }

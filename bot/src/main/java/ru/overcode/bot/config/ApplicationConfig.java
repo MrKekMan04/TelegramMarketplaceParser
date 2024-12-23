@@ -12,4 +12,5 @@ public record ApplicationConfig(
         @NotEmpty
         String gatewayUrl
 ) {
+
 }

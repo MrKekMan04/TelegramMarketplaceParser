@@ -5,7 +5,8 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.overcode.bot.config.feign.linkclient.LinkFeignClient;
+import ru.overcode.bot.config.feign.link.LinkFeignClient;
+import ru.overcode.bot.dto.link.RemoveLinkRequest;
 
 @Component
 @RequiredArgsConstructor
@@ -30,8 +31,7 @@ public class RemoveLinkCommand implements Command {
     public SendMessage handle(Update update) {
         Chat chat = update.message().chat();
         Long chatId = update.message().chat().id();
-        var response = "1";
-        //var response = linkFeignClient.removeLink(1L, new RemoveLinkRequest(chatId));
+        var response = linkFeignClient.removeLink(1L, new RemoveLinkRequest(chatId));
         return new SendMessage(chat.id(), response.toString());
     }
 }

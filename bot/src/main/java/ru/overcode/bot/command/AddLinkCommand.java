@@ -7,9 +7,9 @@ import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.overcode.bot.config.feign.linkclient.LinkFeignClient;
-import ru.overcode.bot.dto.AddLinkRequest;
-import ru.overcode.bot.dto.AddLinkResponse;
+import ru.overcode.bot.config.feign.link.LinkFeignClient;
+import ru.overcode.bot.dto.link.AddLinkRequest;
+import ru.overcode.bot.dto.link.AddLinkResponse;
 import ru.overcode.shared.api.Response;
 
 import java.net.URI;
@@ -37,7 +37,7 @@ public class AddLinkCommand implements Command {
     @Override
     public SendMessage handle(Update update) {
         Chat chat = update.message().chat();
-        Long chatId = update.message().chat().id();
+        Long chatId = chat.id();
         String[] parameters = update.message().text().split(" ");
 
         try {
@@ -46,23 +46,20 @@ public class AddLinkCommand implements Command {
             }
 
             String url = parameters[1];
-            URI uri = URI.create(url);;
+            URI uri = URI.create(url);
 
             AddLinkRequest request = new AddLinkRequest(chatId, uri);
 
-            Response<AddLinkResponse> addLinkResponse = linkFeignClient
-                    .addLink(request);
+            Response<AddLinkResponse> addLinkResponse = linkFeignClient.addLink(request);
 
-            if (!addLinkResponse.getErrors().isEmpty()) {
-                return new SendMessage(chatId, "Ссылка не найдена или не поддерживается ." + addLinkResponse.getErrors().getLast());
-            }
-
-            return new SendMessage(chatId, "Ссылка успешно добавлена. ID: " + addLinkResponse.getData().linkId());
+            return !addLinkResponse.getErrors().isEmpty()
+                    ? new SendMessage(chatId, "Ссылка не найдена или не поддерживается ." + addLinkResponse.getErrors().getLast())
+                    : new SendMessage(chatId, "Ссылка успешно добавлена. ID: " + addLinkResponse.getData().linkId());
 
         } catch (IllegalArgumentException e) {
             return new SendMessage(chatId, "Некорректный формат ссылки.");
         } catch (FeignException.UnprocessableEntity e) {
-                return new SendMessage(chatId, "422"+ e.getMessage());
+            return new SendMessage(chatId, "422" + e.getMessage());
         } catch (FeignException.InternalServerError e) {
             return new SendMessage(chatId, "500" + e.getMessage());
         } catch (FeignException.NotFound e) {
