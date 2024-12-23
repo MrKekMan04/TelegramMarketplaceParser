@@ -3,6 +3,7 @@ server:
 
 app:
   telegram-token: ${TOKEN_TELEGRAM}
+  gatewayUrl: http://localhost:8080
 
 spring:
   application:

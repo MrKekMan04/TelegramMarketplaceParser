@@ -2,10 +2,16 @@ package ru.overcode.bot.command;
 
 import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.SendMessage;
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import ru.overcode.bot.config.feign.linkclient.LinkFeignClient;
+import ru.overcode.bot.dto.AddLinkRequest;
+import ru.overcode.bot.dto.AddLinkResponse;
+
+import java.net.URI;
+import java.net.URISyntaxException;
 
 @Component
 @RequiredArgsConstructor
@@ -13,6 +19,8 @@ public class AddLinkCommand implements Command {
 
     private static final String COMMAND_NAME = "/add-link";
     private static final String COMMAND_DESCRIPTION = "Добавить ссылку в отслеживаемые";
+
+    private final LinkFeignClient linkFeignClient;
 
     @Override
     public String command() {
@@ -30,15 +38,30 @@ public class AddLinkCommand implements Command {
         Long chatId = update.message().chat().id();
         String[] parameters = update.message().text().split(" ");
 
-        if (parameters.length != 2) {
-            return new SendMessage(chatId, "Неверный синтаксис команды");
+        try {
+            if (parameters.length < 2) {
+                throw new IllegalArgumentException("Укажите ссылку после команды.");
+            }
+
+            String url = parameters[1];
+            URI uri = new URI(url);
+
+            AddLinkRequest request = new AddLinkRequest(chatId, uri);
+
+            AddLinkResponse addLinkResponse = linkFeignClient
+                    .addLink(request)
+                    .getData();
+
+            return new SendMessage(chatId, "Ссылка успешно добавлена. ID: " + addLinkResponse.id());
+
+        } catch (URISyntaxException e) {
+            return new SendMessage(chatId, "Некорректный формат ссылки.");
+        } catch (FeignException.NotFound e) {
+            return new SendMessage(chatId, "Ссылка не найдена или не поддерживается.");
+        } catch (FeignException e) {
+            return new SendMessage(chatId, "Ошибка при добавлении ссылки: " + e.getMessage());
+        } catch (Exception e) {
+            return new SendMessage(chatId, "Произошла непредвиденная ошибка при добавлении ссылки.");
         }
-
-        return new SendMessage(chat.id(), getResponseMessage(chat))
-                .parseMode(ParseMode.HTML);
-    }
-
-    private String getResponseMessage(Chat chat) {
-        return "Ok";
     }
 }
