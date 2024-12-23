@@ -28,7 +28,7 @@ public class FeignConfig {
                 .decoder(new GsonDecoder())
                 .retryer(Retryer.NEVER_RETRY)
                 .logger(new Slf4jLogger(LinkFeignClient.class))
-                .logLevel(Logger.Level.BASIC)
+                .logLevel(Logger.Level.FULL)
                 .target(LinkFeignClient.class, gatewayUrl);
     }
 }

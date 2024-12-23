@@ -8,7 +8,6 @@ import ru.overcode.bot.dto.RemoveLinkRequest;
 import ru.overcode.shared.api.ListResponse;
 import ru.overcode.shared.api.Response;
 
-
 public interface LinkFeignClient {
 
     @GetMapping("/api/v1/links")

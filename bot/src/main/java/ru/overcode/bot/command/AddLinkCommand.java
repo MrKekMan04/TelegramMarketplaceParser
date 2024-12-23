@@ -5,14 +5,16 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.overcode.bot.config.feign.linkclient.LinkFeignClient;
 import ru.overcode.bot.dto.AddLinkRequest;
 import ru.overcode.bot.dto.AddLinkResponse;
+import ru.overcode.shared.api.Response;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class AddLinkCommand implements Command {
@@ -40,28 +42,33 @@ public class AddLinkCommand implements Command {
 
         try {
             if (parameters.length < 2) {
-                throw new IllegalArgumentException("Укажите ссылку после команды.");
+                return new SendMessage(chatId, "Укажите ссылку после команды.");
             }
 
             String url = parameters[1];
-            URI uri = new URI(url);
+            URI uri = URI.create(url);;
 
             AddLinkRequest request = new AddLinkRequest(chatId, uri);
 
-            AddLinkResponse addLinkResponse = linkFeignClient
-                    .addLink(request)
-                    .getData();
+            Response<AddLinkResponse> addLinkResponse = linkFeignClient
+                    .addLink(request);
 
-            return new SendMessage(chatId, "Ссылка успешно добавлена. ID: " + addLinkResponse.id());
+            if (!addLinkResponse.getErrors().isEmpty()) {
+                return new SendMessage(chatId, "Ссылка не найдена или не поддерживается ." + addLinkResponse.getErrors().getLast());
+            }
 
-        } catch (URISyntaxException e) {
+            return new SendMessage(chatId, "Ссылка успешно добавлена. ID: " + addLinkResponse.getData().linkId());
+
+        } catch (IllegalArgumentException e) {
             return new SendMessage(chatId, "Некорректный формат ссылки.");
+        } catch (FeignException.UnprocessableEntity e) {
+                return new SendMessage(chatId, "422"+ e.getMessage());
+        } catch (FeignException.InternalServerError e) {
+            return new SendMessage(chatId, "500" + e.getMessage());
         } catch (FeignException.NotFound e) {
-            return new SendMessage(chatId, "Ссылка не найдена или не поддерживается.");
-        } catch (FeignException e) {
-            return new SendMessage(chatId, "Ошибка при добавлении ссылки: " + e.getMessage());
+            return new SendMessage(chatId, "404" + e.getMessage());
         } catch (Exception e) {
-            return new SendMessage(chatId, "Произошла непредвиденная ошибка при добавлении ссылки.");
+            return new SendMessage(chatId, "Произошла непредвиденная ошибка при добавлении ссылки." + e.getMessage());
         }
     }
 }
