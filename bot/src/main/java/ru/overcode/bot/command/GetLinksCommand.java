@@ -1,14 +1,10 @@
 package ru.overcode.bot.command;
 
-import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.overcode.bot.config.feign.link.LinkFeignClient;
-import ru.overcode.bot.dto.link.GetLinkResponse;
-
-import java.util.List;
+import ru.overcode.bot.service.CommandService;
 
 @Component
 @RequiredArgsConstructor
@@ -17,7 +13,7 @@ public class GetLinksCommand implements Command {
     private static final String COMMAND_NAME = "/get-links";
     private static final String COMMAND_DESCRIPTION = "Зарегистрировать пользователя";
 
-    private final LinkFeignClient linkFeignClient;
+    private final CommandService commandService;
 
     @Override
     public String command() {
@@ -31,10 +27,9 @@ public class GetLinksCommand implements Command {
 
     @Override
     public SendMessage handle(Update update) {
-        Chat chat = update.message().chat();
         Long chatId = update.message().chat().id();
-
-        List<GetLinkResponse> data = linkFeignClient.getLinks(chatId).getData();
-        return new SendMessage(chat.id(), data.toString());
+        String[] parameters = update.message().text().split(" ");
+        String response = commandService.getLinks(chatId, parameters);
+        return new SendMessage(chatId, response);
     }
 }
