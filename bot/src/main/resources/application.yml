@@ -3,8 +3,11 @@ server:
 
 app:
   telegram-token: ${TOKEN_TELEGRAM}
-  gatewayUrl: http://gateway:8080
 
+feign:
+  gateway:
+    api:
+      url: ${GATEWAY_API_URL}
 spring:
   application:
     name: bot

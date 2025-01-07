@@ -1,9 +1,17 @@
 package ru.overcode.bot.config.feign.link;
 
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import ru.overcode.bot.dto.chat.RegistrationChatRequest;
-import ru.overcode.bot.dto.link.*;
+import ru.overcode.bot.dto.link.AddLinkRequest;
+import ru.overcode.bot.dto.link.AddLinkResponse;
+import ru.overcode.bot.dto.link.GetLinkResponse;
+import ru.overcode.bot.dto.link.RemoveLinkRequest;
 import ru.overcode.bot.dto.rule.AddRuleRequest;
 import ru.overcode.bot.dto.rule.GetRulesResponse;
 import ru.overcode.bot.dto.rule.RemoveRuleRequest;

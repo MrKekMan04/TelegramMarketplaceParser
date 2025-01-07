@@ -17,7 +17,7 @@ public class FeignConfig {
 
     @Bean
     public LinkFeignClient linkFeignClient(
-            @Value("${app.gateway-url}")
+            @Value("${feign.gateway.api.url}")
             String gatewayUrl
     ) {
         return Feign.builder()

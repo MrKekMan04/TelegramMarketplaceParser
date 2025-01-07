@@ -1,14 +1,20 @@
 package ru.overcode.bot.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.overcode.bot.config.feign.link.LinkFeignClient;
 import ru.overcode.bot.dto.chat.RegistrationChatRequest;
-import ru.overcode.bot.dto.link.*;
+import ru.overcode.bot.dto.link.AddLinkRequest;
+import ru.overcode.bot.dto.link.AddLinkResponse;
+import ru.overcode.bot.dto.link.GetLinkResponse;
+import ru.overcode.bot.dto.link.RemoveLinkRequest;
 import ru.overcode.bot.dto.rule.AddRuleRequest;
 import ru.overcode.bot.dto.rule.GetRulesResponse;
 import ru.overcode.bot.dto.rule.RemoveRuleRequest;
+import ru.overcode.bot.dto.rule.RuleDto;
+import ru.overcode.shared.api.ErrorDto;
 import ru.overcode.shared.api.ListResponse;
 import ru.overcode.shared.api.Response;
 
@@ -17,12 +23,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class CommandService {
 
     private final LinkFeignClient linkFeignClient;
+    private final ObjectMapper objectMapper;
 
     public String registerChat(Long chatId, String[] params) {
         return processCommand(params, 0,
@@ -49,7 +57,7 @@ public class CommandService {
         return processCommand(params, 1,
                 () -> {
                     Long linkId = parseLong(params[1], "Некорректный формат ID ссылки");
-                    Response<Void> response = linkFeignClient.removeLink(linkId, new RemoveLinkRequest(chatId));
+                    linkFeignClient.removeLink(linkId, new RemoveLinkRequest(chatId));
                     return "Ссылка успешно удалена";
                 },
                 "Произошла непредвиденная ошибка при удалении ссылки"
@@ -61,10 +69,13 @@ public class CommandService {
                 () -> {
                     Long linkId = parseLong(params[1], "Некорректный формат ID ссылки");
                     Long ruleId = parseLong(params[2], "Некорректный формат ID правила");
+
                     Map<String, String> rules = parseRules(params[3]);
                     AddRuleRequest request = new AddRuleRequest(chatId, ruleId, rules);
-                    linkFeignClient.addRule(linkId, request);
-                    return "Правило успешно привязано к ссылке.";
+                    Response<RuleDto> response = linkFeignClient.addRule(linkId, request);
+
+                    String description = response.getData().ruleDescription();
+                    return String.format("Правило с идентификатором %s успешно привязано к ссылке.\n%s", ruleId, description);
                 },
                 "Произошла непредвиденная ошибка при привязке правила."
         );
@@ -82,7 +93,7 @@ public class CommandService {
         );
     }
 
-    public String getRules(Long chatId, String[] params) {
+    public String getRules(String[] params) {
         return processCommand(params, 1,
                 () -> {
                     Long linkId = parseLong(params[1], "Некорректный формат ID ссылки");
@@ -115,7 +126,7 @@ public class CommandService {
             return action.get();
         } catch (IllegalArgumentException e) {
             return e.getMessage();
-        } catch (FeignException.UnprocessableEntity e) {
+        } catch (FeignException.UnprocessableEntity | FeignException.BadRequest e) {
             return parseErrorResponse(e);
         } catch (Exception e) {
             return defaultMessage;
@@ -148,16 +159,17 @@ public class CommandService {
     }
 
     private String parseErrorResponse(FeignException e) {
-        String responseBody = e.contentUTF8();
-        if (responseBody.contains("LINK_NOT_FOUND")) return "Ссылка не найдена.";
-        if (responseBody.contains("LINK_NOT_ADDED")) return "Ссылка не отслеживается";
-        if (responseBody.contains("LINK_ALREADY_ADDED")) return "Ссылка уже добавлена";
-        if (responseBody.contains("LINK_NOT_SUPPORTED")) return "Ссылка не поддерживается";
-        if (responseBody.contains("RULE_NOT_FOUND")) return "Правило не найдено.";
-        if (responseBody.contains("RULE_NOT_ADDED")) return "Правило не отслеживается.";
-        if (responseBody.contains("RULE_ALREADY_ADDED")) return "Правило уже добавлено";
-        if (responseBody.contains("CHAT_NOT_FOUND")) return "Чат не зарегистрирован.";
-        if (responseBody.contains("CHAT_ALREADY_REGISTERED")) return "Чат уже зарегистрирован.";
+        try {
+            Response<?> response = objectMapper.readValue(e.contentUTF8(), Response.class);
+
+            if (!response.getErrors().isEmpty()) {
+                return response.getErrors().stream()
+                        .map(ErrorDto::message)
+                        .collect(Collectors.joining(", "));
+            }
+        } catch (Exception ex) {
+            return "Ошибка при обработке ответа сервера";
+        }
         return "Ошибка при обработке";
     }
 }

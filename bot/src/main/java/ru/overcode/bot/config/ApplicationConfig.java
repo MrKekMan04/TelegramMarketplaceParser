@@ -8,9 +8,7 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties(prefix = "app", ignoreUnknownFields = false)
 public record ApplicationConfig(
         @NotEmpty
-        String telegramToken,
-        @NotEmpty
-        String gatewayUrl
+        String telegramToken
 ) {
 
 }

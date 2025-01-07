@@ -29,7 +29,7 @@ public class GetRulesCommand implements Command {
     public SendMessage handle(Update update) {
         Long chatId = update.message().chat().id();
         String[] parameters = update.message().text().split(" ");
-        String response = commandService.getRules(chatId, parameters);
+        String response = commandService.getRules(parameters);
         return new SendMessage(chatId, response);
     }
 }

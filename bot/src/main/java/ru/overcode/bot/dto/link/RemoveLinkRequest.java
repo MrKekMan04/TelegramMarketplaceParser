@@ -1,4 +1,9 @@
 package ru.overcode.bot.dto.link;
 
-public record RemoveLinkRequest(Long chatId) {
+import io.swagger.v3.oas.annotations.media.Schema;
+
+public record RemoveLinkRequest(
+        @Schema(description = "Идентификатор телеграмм чата", requiredMode = Schema.RequiredMode.REQUIRED)
+        Long chatId
+) {
 }
