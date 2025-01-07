@@ -7,6 +7,7 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.request.SetMyCommands;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
 import ru.overcode.bot.command.Command;
 import ru.overcode.bot.config.ApplicationConfig;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 
 @Component
 @Slf4j
+@EnableConfigurationProperties(ApplicationConfig.class)
 public class Bot extends TelegramBot {
 
     private final List<Command> commands;

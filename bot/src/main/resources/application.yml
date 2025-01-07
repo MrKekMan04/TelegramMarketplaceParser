@@ -4,6 +4,10 @@ server:
 app:
   telegram-token: ${TOKEN_TELEGRAM}
 
+feign:
+  gateway:
+    api:
+      url: ${GATEWAY_API_URL}
 spring:
   application:
     name: bot
