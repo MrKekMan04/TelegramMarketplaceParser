@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomUtils;
 import ru.overcode.scrapper.BaseIntegrationTest;
 import ru.overcode.scrapper.model.link.Link;
@@ -41,7 +40,7 @@ public class WildberriesServiceTest extends BaseIntegrationTest {
     @Test
     @DisplayName("Запрос не ретраится")
     public void fetchProducts_shouldNeverRetry_whenExternalServiceUnavailable() {
-        String nm = RandomStringUtils.randomNumeric(3);
+        String nm = String.valueOf(RandomUtils.nextLong(0, 999));
 
         Link link = new Link()
                 .setId(RandomUtils.nextLong())

@@ -4,6 +4,7 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.BotCommand;
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.request.SetMyCommands;
 import lombok.extern.slf4j.Slf4j;
@@ -27,8 +28,10 @@ public class Bot extends TelegramBot {
         super(config.telegramToken());
 
         this.commandNames = commands.stream()
-                .map(Command::command)
-                .collect(Collectors.joining(", "));
+                .map(command -> String.format("""
+                        %s - %s
+                        """, command.command(), command.description()))
+                .collect(Collectors.joining("\n"));
         this.commands = commands;
         this.setUpMenuCommands();
         this.setUpdatesListener(this::onTelegramUpdateReceived);
@@ -51,7 +54,9 @@ public class Bot extends TelegramBot {
                             ? processCommandMessage(update, chatId, message)
                             : processNonCommandMessage(chatId, message);
 
-                    execute(responseMessage);
+                    execute(responseMessage
+                            .parseMode(ParseMode.MarkdownV2)
+                            .disableWebPagePreview(true));
                 });
 
         return UpdatesListener.CONFIRMED_UPDATES_ALL;

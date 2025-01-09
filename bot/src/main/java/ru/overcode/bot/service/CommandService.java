@@ -46,7 +46,7 @@ public class CommandService {
                 () -> {
                     URI uri = URI.create(params[1]);
                     Response<AddLinkResponse> response = linkFeignClient.addLink(new AddLinkRequest(chatId, uri));
-                    return "Ссылка успешно добавлена. ID: " + response.getData().linkId();
+                    return "Ссылка успешно добавлена. Ее идентификатор: " + response.getData().linkId();
                 },
                 "Произошла непредвиденная ошибка при добавлении ссылки"
         );
@@ -55,7 +55,7 @@ public class CommandService {
     public String removeLink(Long chatId, String[] params) {
         return processCommand(params, 1,
                 () -> {
-                    Long linkId = parseLong(params[1], "Некорректный формат ID ссылки");
+                    Long linkId = parseLong(params[1], "Некорректный формат идентификатора ссылки");
                     linkFeignClient.removeLink(linkId, new RemoveLinkRequest(chatId));
                     return "Ссылка успешно удалена";
                 },
@@ -66,25 +66,27 @@ public class CommandService {
     public String addRule(Long chatId, String[] params) {
         return processCommand(params, 3,
                 () -> {
-                    Long linkId = parseLong(params[1], "Некорректный формат ID ссылки");
-                    Long ruleId = parseLong(params[2], "Некорректный формат ID правила");
+                    Long linkId = parseLong(params[1], "Некорректный формат идентификатора ссылки");
+                    Long ruleId = parseLong(params[2], "Некорректный формат идентификатора правила");
 
                     Map<String, String> rules = parseRules(params[3]);
                     AddRuleRequest request = new AddRuleRequest(chatId, ruleId, rules);
                     Response<RuleDto> response = linkFeignClient.addRule(linkId, request);
 
                     String description = response.getData().ruleDescription();
-                    return String.format("Правило с идентификатором %s успешно привязано к ссылке.\n%s", ruleId, description);
+                    return String.format("""
+                            Правило `%s` с идентификатором %d успешно привязано к ссылке
+                            """, description, ruleId);
                 },
-                "Произошла непредвиденная ошибка при привязке правила."
+                "Произошла непредвиденная ошибка при привязке правила"
         );
     }
 
     public String removeRule(Long chatId, String[] params) {
         return processCommand(params, 2,
                 () -> {
-                    Long linkId = parseLong(params[1], "Некорректный формат ID ссылки");
-                    Long ruleId = parseLong(params[2], "Некорректный формат ID правила");
+                    Long linkId = parseLong(params[1], "Некорректный формат идентификатора ссылки");
+                    Long ruleId = parseLong(params[2], "Некорректный формат идентификатора правила");
                     linkFeignClient.removeRule(linkId, ruleId, new RemoveRuleRequest(chatId));
                     return "Правило успешно удаленно";
                 },
@@ -95,13 +97,16 @@ public class CommandService {
     public String getRules(String[] params) {
         return processCommand(params, 1,
                 () -> {
-                    Long linkId = parseLong(params[1], "Некорректный формат ID ссылки");
+                    Long linkId = parseLong(params[1], "Некорректный формат идентификатора ссылки");
                     ListResponse<GetRulesResponse> response = linkFeignClient.getRules(linkId);
 
                     return response.getData().isEmpty()
-                            ? "Нет правил для данной ссылки."
+                            ? "Нет правил для данной ссылки"
                             : response.getData().stream()
-                            .map(rule -> "Правило с Id " + rule.ruleId() + " и описанием: " + rule.description())
+                            .map(rule -> String.format("""
+                                    Правило с идентификатором %d - %s
+                                    Необходимые параметры: %s
+                                    """, rule.ruleId(), rule.description(), rule.params()))
                             .collect(Collectors.joining("\n"));
                 },
                 "Произошла непредвиденная ошибка"
@@ -117,22 +122,23 @@ public class CommandService {
                             List<RuleDto> rules = link.rules();
 
                             String rulesPart = rules.isEmpty()
-                                    ? "без правил"
+                                    ? "Правила для ссылки не отслеживаются"
                                     : rules.stream()
-                                    .map(RuleDto::ruleId)
-                                    .map(String::valueOf)
-                                    .collect(Collectors.joining(", "));
+                                    .map(rule -> String.format("""
+                                            Правило с идентификатором %d - %s
+                                            """, rule.ruleId(), rule.ruleDescription()))
+                                    .collect(Collectors.joining("\n"));
 
-                            return "Ссылка " + linkUrl + " с Id " + linkId + " и правилами: " + rulesPart + ".";
+                            return "Ссылка " + linkUrl + " с идентификатором " + linkId + " и правилами:\n" + rulesPart;
                         })
-                        .collect(Collectors.joining("\n")),
+                        .collect(Collectors.joining("\n\n")),
                 "Произошла непредвиденная ошибка"
         );
     }
 
     private String processCommand(String[] params, int expectedParams, Supplier<String> action, String defaultMessage) {
         if (!validateParams(params, expectedParams)) {
-            return String.format("Некорректное количество параметров. Ожидается: %d.", expectedParams);
+            return String.format("Некорректное количество параметров. Ожидается: %d", expectedParams);
         }
         return handleExceptions(action, defaultMessage);
     }
@@ -181,7 +187,7 @@ public class CommandService {
             if (!response.getErrors().isEmpty()) {
                 return response.getErrors().stream()
                         .map(ErrorDto::message)
-                        .collect(Collectors.joining(", "));
+                        .collect(Collectors.joining("\n"));
             }
         } catch (Exception ex) {
             return "Ошибка при обработке ответа сервера";
