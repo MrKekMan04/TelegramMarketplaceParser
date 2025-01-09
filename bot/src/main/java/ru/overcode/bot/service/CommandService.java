@@ -8,6 +8,7 @@ import ru.overcode.bot.config.feign.link.LinkFeignClient;
 import ru.overcode.bot.dto.chat.RegistrationChatRequest;
 import ru.overcode.bot.dto.link.AddLinkRequest;
 import ru.overcode.bot.dto.link.AddLinkResponse;
+import ru.overcode.bot.dto.link.GetLinkResponse;
 import ru.overcode.bot.dto.link.RemoveLinkRequest;
 import ru.overcode.bot.dto.rule.AddRuleRequest;
 import ru.overcode.bot.dto.rule.GetRulesResponse;
@@ -115,23 +116,28 @@ public class CommandService {
 
     public String getLinks(Long chatId, String[] params) {
         return processCommand(params, 0,
-                () -> linkFeignClient.getLinks(chatId).getData().stream()
-                        .map(link -> {
-                            Long linkId = link.linkId();
-                            URI linkUrl = link.linkUrl();
-                            List<RuleDto> rules = link.rules();
+                () -> {
+                    List<GetLinkResponse> data = linkFeignClient.getLinks(chatId).getData();
+                    return data.isEmpty()
+                            ? "Ни одной ссылки не отслеживается"
+                            : data.stream()
+                            .map(link -> {
+                                Long linkId = link.linkId();
+                                URI linkUrl = link.linkUrl();
+                                List<RuleDto> rules = link.rules();
 
-                            String rulesPart = rules.isEmpty()
-                                    ? "Правила для ссылки не отслеживаются"
-                                    : rules.stream()
-                                    .map(rule -> String.format("""
-                                            Правило с идентификатором %d - %s
-                                            """, rule.ruleId(), rule.ruleDescription()))
-                                    .collect(Collectors.joining("\n"));
+                                String rulesPart = rules.isEmpty()
+                                        ? "Правила для ссылки не отслеживаются"
+                                        : rules.stream()
+                                        .map(rule -> String.format("""
+                                                Правило с идентификатором %d - %s
+                                                """, rule.ruleId(), rule.ruleDescription()))
+                                        .collect(Collectors.joining("\n"));
 
-                            return "Ссылка " + linkUrl + " с идентификатором " + linkId + " и правилами:\n" + rulesPart;
-                        })
-                        .collect(Collectors.joining("\n\n")),
+                                return "Ссылка " + linkUrl + " с идентификатором " + linkId + " и правилами:\n" + rulesPart;
+                            })
+                            .collect(Collectors.joining("\n\n"));
+                },
                 "Произошла непредвиденная ошибка"
         );
     }

@@ -3,6 +3,7 @@ package ru.overcode.gateway.exception.handler;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -16,6 +17,7 @@ import ru.overcode.shared.api.Response;
 import java.util.List;
 
 @RestControllerAdvice
+@Slf4j
 @RequiredArgsConstructor
 public class RestExceptionHandler {
 
@@ -23,6 +25,7 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Response<Void>> handleException(Exception ignored) {
+        log.error("ERROR", ignored);
         return ResponseEntity.internalServerError()
                 .body(Response.fail(List.of(responseMapper.toError(GatewayExceptionMessage.INTERNAL_SERVER))));
     }

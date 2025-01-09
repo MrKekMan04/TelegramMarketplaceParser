@@ -55,7 +55,7 @@ public class Bot extends TelegramBot {
                             : processNonCommandMessage(chatId, message);
 
                     execute(responseMessage
-                            .parseMode(ParseMode.MarkdownV2)
+                            .parseMode(ParseMode.Markdown)
                             .disableWebPagePreview(true));
                 });
 
