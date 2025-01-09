@@ -16,4 +16,3 @@ public class KafkaProperties {
     private KafkaConsumers consumers;
 }
 
-

@@ -31,6 +31,7 @@ public class GetRulesCommand implements Command {
         Long chatId = update.message().chat().id();
         String[] parameters = update.message().text().split(" ");
         String response = commandService.getRules(parameters);
-        return new SendMessage(chatId, response).parseMode(ParseMode.Markdown);
+        return new SendMessage(chatId, response)
+                .parseMode(ParseMode.Markdown);
     }
 }

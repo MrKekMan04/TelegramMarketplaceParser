@@ -33,8 +33,7 @@ public class KafkaConfig {
 
     @Bean
     public ConcurrentKafkaListenerContainerFactory<Long, GatewayLinkUpdateDto> linkUpdateContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<Long, GatewayLinkUpdateDto> listener
-                = new ConcurrentKafkaListenerContainerFactory<>();
+        ConcurrentKafkaListenerContainerFactory<Long, GatewayLinkUpdateDto> listener = new ConcurrentKafkaListenerContainerFactory<>();
         listener.setConsumerFactory(linkUpdateConsumerFactory());
         return listener;
     }

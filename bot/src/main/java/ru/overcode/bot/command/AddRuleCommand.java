@@ -1,6 +1,7 @@
 package ru.overcode.bot.command;
 
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.SendMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -32,6 +33,7 @@ public class AddRuleCommand implements Command {
         Long chatId = update.message().chat().id();
         String[] parameters = update.message().text().split(" ");
         String response = commandService.addRule(chatId, parameters);
-        return new SendMessage(chatId, response);
+        return new SendMessage(chatId, response)
+                .parseMode(ParseMode.Markdown);
     }
 }

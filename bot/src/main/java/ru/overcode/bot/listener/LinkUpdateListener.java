@@ -32,7 +32,8 @@ public class LinkUpdateListener {
                 linkUpdate.updateMessage()
         );
 
-        bot.execute(new SendMessage(linkUpdate.chatId(), message).parseMode(ParseMode.Markdown));
+        bot.execute(new SendMessage(linkUpdate.chatId(), message)
+                .parseMode(ParseMode.Markdown));
     }
 }
 

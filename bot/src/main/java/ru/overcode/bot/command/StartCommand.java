@@ -31,6 +31,7 @@ public class StartCommand implements Command {
         Long chatId = update.message().chat().id();
         String[] parameters = update.message().text().split(" ");
         String response = commandService.registerChat(chatId, parameters);
-        return new SendMessage(chatId, response).parseMode(ParseMode.Markdown);
+        return new SendMessage(chatId, response)
+                .parseMode(ParseMode.Markdown);
     }
 }
