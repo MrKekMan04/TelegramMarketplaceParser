@@ -8,7 +8,6 @@ import ru.overcode.bot.config.feign.link.LinkFeignClient;
 import ru.overcode.bot.dto.chat.RegistrationChatRequest;
 import ru.overcode.bot.dto.link.AddLinkRequest;
 import ru.overcode.bot.dto.link.AddLinkResponse;
-import ru.overcode.bot.dto.link.GetLinkResponse;
 import ru.overcode.bot.dto.link.RemoveLinkRequest;
 import ru.overcode.bot.dto.rule.AddRuleRequest;
 import ru.overcode.bot.dto.rule.GetRulesResponse;
@@ -35,8 +34,8 @@ public class CommandService {
     public String registerChat(Long chatId, String[] params) {
         return processCommand(params, 0,
                 () -> {
-                    Response<Void> response = linkFeignClient.registerChat(new RegistrationChatRequest(chatId));
-                    return response.toString();
+                    linkFeignClient.registerChat(new RegistrationChatRequest(chatId));
+                    return "Чат успешно зарегистрирован";
                 },
                 "Произошла непредвиденная ошибка"
         );
@@ -86,8 +85,8 @@ public class CommandService {
                 () -> {
                     Long linkId = parseLong(params[1], "Некорректный формат ID ссылки");
                     Long ruleId = parseLong(params[2], "Некорректный формат ID правила");
-                    Response<Void> response = linkFeignClient.removeRule(linkId, ruleId, new RemoveRuleRequest(chatId));
-                    return response.toString();
+                    linkFeignClient.removeRule(linkId, ruleId, new RemoveRuleRequest(chatId));
+                    return "Правило успешно удаленно";
                 },
                 "Произошла непредвиденная ошибка"
         );
@@ -98,7 +97,12 @@ public class CommandService {
                 () -> {
                     Long linkId = parseLong(params[1], "Некорректный формат ID ссылки");
                     ListResponse<GetRulesResponse> response = linkFeignClient.getRules(linkId);
-                    return response.getData().toString();
+
+                    return response.getData().isEmpty()
+                            ? "Нет правил для данной ссылки."
+                            : response.getData().stream()
+                            .map(rule -> "Правило с Id " + rule.ruleId() + " и описанием: " + rule.description())
+                            .collect(Collectors.joining("\n"));
                 },
                 "Произошла непредвиденная ошибка"
         );
@@ -106,10 +110,22 @@ public class CommandService {
 
     public String getLinks(Long chatId, String[] params) {
         return processCommand(params, 0,
-                () -> {
-                    List<GetLinkResponse> data = linkFeignClient.getLinks(chatId).getData();
-                    return data.toString();
-                },
+                () -> linkFeignClient.getLinks(chatId).getData().stream()
+                        .map(link -> {
+                            Long linkId = link.linkId();
+                            URI linkUrl = link.linkUrl();
+                            List<RuleDto> rules = link.rules();
+
+                            String rulesPart = rules.isEmpty()
+                                    ? "без правил"
+                                    : rules.stream()
+                                    .map(RuleDto::ruleId)
+                                    .map(String::valueOf)
+                                    .collect(Collectors.joining(", "));
+
+                            return "Ссылка " + linkUrl + " с Id " + linkId + " и правилами: " + rulesPart + ".";
+                        })
+                        .collect(Collectors.joining("\n")),
                 "Произошла непредвиденная ошибка"
         );
     }
