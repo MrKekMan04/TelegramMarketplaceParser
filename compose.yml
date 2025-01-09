@@ -40,6 +40,7 @@ services:
       - gateway
     environment:
       - KAFKA_BOOTSTRAP_SERVERS=kafka1:9092,kafka2:9093,kafka3:9094
+      - GATEWAY_API_URL=http://gateway:8080
     networks:
       - backend
 

@@ -1,13 +1,10 @@
 package ru.overcode.gateway.dto.chatlink.rule;
 
-import lombok.Getter;
-import lombok.Setter;
+public interface LinkRuleDto {
 
-@Getter
-@Setter
-public class LinkRuleDto {
+    Long getLinkId();
 
-    private Long linkId;
-    private Long ruleId;
-    private String ruleDescription;
+    Long getRuleId();
+
+    String getRuleDescription();
 }
