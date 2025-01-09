@@ -8,6 +8,17 @@ feign:
   gateway:
     api:
       url: ${GATEWAY_API_URL}
+
+kafka:
+  bootstrap-servers: ${spring.kafka.bootstrap-servers}
+  consumers:
+    link-update:
+      topic: gateway.link.update
+      group-id: gateway-link-update-bot
+      enable: true
+
 spring:
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092,localhost:9093,localhost:9094}
   application:
     name: bot
