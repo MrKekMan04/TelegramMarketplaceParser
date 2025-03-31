@@ -1,6 +1,8 @@
 package ru.overcode.gateway.service.rule;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -36,11 +38,13 @@ public class RuleDbService {
         return ruleRepository.findAllByLinkId(linkId);
     }
 
-    /**
-     * Только для тестирования
-     */
+    @Transactional(readOnly = true)
+    public Page<Rule> findAll(Pageable pageable) {
+        return ruleRepository.findAll(pageable);
+    }
+
     @Transactional
-    public void saveWithId(Long ruleId, String name, String description) {
-        ruleRepository.saveWithId(ruleId, name, description);
+    public Rule save(Rule rule) {
+        return ruleRepository.save(rule);
     }
 }

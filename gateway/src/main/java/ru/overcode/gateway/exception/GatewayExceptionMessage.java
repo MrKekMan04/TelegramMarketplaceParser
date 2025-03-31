@@ -14,6 +14,7 @@ public enum GatewayExceptionMessage implements CodeWithMessage {
     LINK_NOT_ADDED("Ссылка с id {linkId} не отслеживается"),
     LINK_ALREADY_ADDED("[Ссылка]({url}) уже отслеживается"),
     LINK_NOT_SUPPORTED("[Ссылка]({url}) не поддерживается"),
+    RULE_EXISTS("Правило с id {ruleId} уже существует"),
     RULE_NOT_FOUND("Правило с id {ruleId} не найдено"),
     RULE_ALREADY_ADDED("Правило с id {ruleId} уже отслеживается"),
     RULE_NOT_ADDED("Правило с id {ruleId} не отслеживается"),
