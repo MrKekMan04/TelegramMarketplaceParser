@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomUtils;
 import ru.overcode.scrapper.BaseIntegrationTest;
 import ru.overcode.scrapper.dto.wildberries.WildberriesApiResponse;
@@ -68,7 +67,7 @@ public class WildberriesProcessorTest extends BaseIntegrationTest {
     @DisplayName("Событие шлётся в топик, когда срабатывает правило меньше чем")
     public void process_shouldSendInKafka_whenLessThenAmountRuleTriggered() throws Exception {
         Long linkId = RandomUtils.nextLong();
-        String nm = RandomStringUtils.randomNumeric(9);
+        String nm = String.valueOf(RandomUtils.nextLong(0, 99999));
         createLink(linkId, URI.create("https://www.wildberries.ru/catalog/" + nm));
 
         long productPrice = 1000L;
@@ -96,7 +95,7 @@ public class WildberriesProcessorTest extends BaseIntegrationTest {
     @DisplayName("Событие не шлётся в топик, когда не срабатывает правило меньше чем")
     public void process_shouldSkipEvent_whenLessThenAmountRuleNotTriggered() throws Exception {
         Long linkId = RandomUtils.nextLong();
-        String nm = RandomStringUtils.randomNumeric(9);
+        String nm = String.valueOf(RandomUtils.nextLong(0, 99999));
         createLink(linkId, URI.create("https://www.wildberries.ru/catalog/" + nm));
 
         long productPrice = 1000L;
@@ -124,7 +123,7 @@ public class WildberriesProcessorTest extends BaseIntegrationTest {
     @DisplayName("Событие не шлётся в топик, когда не пришла цена")
     public void process_shouldSkipEvent_whenPriceIsNull() throws Exception {
         Long linkId = RandomUtils.nextLong();
-        String nm = RandomStringUtils.randomNumeric(9);
+        String nm = String.valueOf(RandomUtils.nextLong(0, 99999));
         createLink(linkId, URI.create("https://www.wildberries.ru/catalog/" + nm));
 
         long productPrice = 1000L;
@@ -152,7 +151,7 @@ public class WildberriesProcessorTest extends BaseIntegrationTest {
     @DisplayName("Событие не шлётся в топик, когда пришёл пустой список продуктов")
     public void process_shouldSkipEvent_whenProductsListIsEmpty() throws Exception {
         Long linkId = RandomUtils.nextLong();
-        String nm = RandomStringUtils.randomNumeric(9);
+        String nm = String.valueOf(RandomUtils.nextLong(0, 99999));
         createLink(linkId, URI.create("https://www.wildberries.ru/catalog/" + nm));
 
         long productPrice = 1000L;
