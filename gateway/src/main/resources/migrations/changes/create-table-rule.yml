@@ -11,7 +11,6 @@ databaseChangeLog:
                   name: id
                   type: bigint
                   remarks: Идентификатор правила
-                  autoIncrement: true
                   constraints:
                     primaryKey: true
               - column:

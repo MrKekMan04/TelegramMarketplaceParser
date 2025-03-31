@@ -1,10 +1,15 @@
 package ru.overcode.gateway.mapper.rule;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import ru.overcode.gateway.config.mapper.MappersConfig;
 import ru.overcode.gateway.dto.chatlink.rule.LinkRuleDto;
 import ru.overcode.gateway.dto.rule.GetRulesResponse;
 import ru.overcode.gateway.dto.rule.RuleDto;
+import ru.overcode.gateway.dto.rule.internal.CreateRuleRequest;
+import ru.overcode.gateway.dto.rule.internal.InternalRuleDto;
+import ru.overcode.gateway.dto.rule.internal.UpdateRuleRequest;
 import ru.overcode.gateway.model.rule.Rule;
 
 import java.util.List;
@@ -28,4 +33,11 @@ public interface RuleMapper {
                 .filter(entry -> validParamNames.contains(entry.getKey()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
+
+    List<InternalRuleDto> toInternalRuleDto(List<Rule> content);
+
+    Rule toEntity(CreateRuleRequest request);
+
+    @Mapping(target = "id", ignore = true)
+    void fillEntity(@MappingTarget Rule rule, UpdateRuleRequest dto);
 }
