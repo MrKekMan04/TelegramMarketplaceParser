@@ -30,7 +30,6 @@ import ru.overcode.gateway.repository.market.MarketRepository;
 import ru.overcode.gateway.repository.marketrule.MarketRuleRepository;
 import ru.overcode.gateway.repository.rule.RuleRepository;
 import ru.overcode.gateway.repository.telegramchat.TelegramChatRepository;
-import ru.overcode.gateway.service.rule.RuleDbService;
 import ru.overcode.shared.dto.event.OutboxEventType;
 import ru.overcode.shared.dto.market.MarketName;
 
@@ -72,8 +71,6 @@ public abstract class BaseIntegrationTest {
     @Autowired
     protected MarketRuleRepository marketRuleRepository;
     @Autowired
-    private RuleDbService ruleDbService;
-    @Autowired
     protected TelegramChatLinkRuleOutboxRepository bindingRuleOutboxRepository;
     @Autowired
     protected LinkOutboxRepository linkOutboxRepository;
@@ -106,21 +103,18 @@ public abstract class BaseIntegrationTest {
     }
 
     protected Rule createRule() {
+        return createRule(RandomUtils.nextLong());
+    }
+
+    protected Rule createRule(Long ruleId) {
+        return createRule(ruleId, RandomStringUtils.randomAlphabetic(5));
+    }
+
+    protected Rule createRule(Long ruleId, String ruleName) {
         return ruleRepository.save(new Rule()
-                .setName(RandomStringUtils.randomAlphabetic(5))
+                .setId(ruleId)
+                .setName(ruleName)
                 .setDescription(RandomStringUtils.randomAlphabetic(5)));
-    }
-
-    protected void createRule(Long ruleId) {
-        createRule(ruleId, RandomStringUtils.randomAlphabetic(5));
-    }
-
-    protected void createRule(Long ruleId, String ruleName) {
-        ruleDbService.saveWithId(
-                ruleId,
-                ruleName,
-                RandomStringUtils.randomAlphabetic(5)
-        );
     }
 
     protected TelegramChatLinkRule createBindingRule(Long bindingId, Long ruleId, Map<String, String> params) {
