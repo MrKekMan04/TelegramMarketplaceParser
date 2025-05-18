@@ -108,14 +108,19 @@ public class RuleService {
             throw getNotFoundException(ruleId);
         }
 
-        ruleDbService.findById(ruleId)
-                .orElseThrow(() -> getNotFoundException(ruleId));
+        findByIdOrElseThrow(ruleId);
 
         TelegramChatLinkRule bindingRule = bindingRuleDbService.findByBindingIdAndRuleId(binding.getId(), ruleId)
                 .orElseThrow(() -> new UnprocessableEntityException(GatewayExceptionMessage.RULE_NOT_ADDED
                         .withParam("ruleId", ruleId.toString())));
 
         removeBindingRule(bindingRule.getId());
+    }
+
+    @Transactional(readOnly = true)
+    public Rule findByIdOrElseThrow(Long ruleId) {
+        return ruleDbService.findById(ruleId)
+                .orElseThrow(() -> getNotFoundException(ruleId));
     }
 
     private UnprocessableEntityException getNotFoundException(Long ruleId) {

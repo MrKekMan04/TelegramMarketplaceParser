@@ -1,8 +1,10 @@
 package ru.overcode.gateway.controller.registration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -39,6 +41,11 @@ public class RegistrationControllerTest {
 
     @MockBean
     private RegistrationService registrationService;
+
+    @AfterEach
+    public void resetMocks() {
+        Mockito.reset(registrationService);
+    }
 
     @Test
     @DisplayName("POST " + REGISTRATION_URL + " - проверка контракта при валидных данных")

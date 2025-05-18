@@ -97,8 +97,12 @@ public abstract class BaseIntegrationTest {
     }
 
     protected Market createMarket(String host) {
+        return createMarket(MarketName.WILDBERRIES, host);
+    }
+
+    protected Market createMarket(MarketName name, String host) {
         return marketRepository.save(new Market()
-                .setName(MarketName.WILDBERRIES)
+                .setName(name)
                 .setUrlDomain(host));
     }
 
