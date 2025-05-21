@@ -1,4 +1,4 @@
-package ru.overcode.scrapper.service.schedule.link.wildberries;
+package ru.overcode.scrapper.service.schedule.link.marketplace;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.WireMock;
@@ -15,12 +15,13 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomUtils;
 import ru.overcode.scrapper.BaseIntegrationTest;
-import ru.overcode.scrapper.dto.wildberries.WildberriesApiResponse;
-import ru.overcode.scrapper.dto.wildberries.WildberriesApiResponse.DataPayload;
-import ru.overcode.scrapper.dto.wildberries.WildberriesApiResponse.DataPayload.Product;
-import ru.overcode.scrapper.dto.wildberries.WildberriesApiResponse.DataPayload.Product.Size;
-import ru.overcode.scrapper.dto.wildberries.WildberriesApiResponse.DataPayload.Product.Size.Price;
+import ru.overcode.scrapper.dto.marketplace.WildberriesApiResponse;
+import ru.overcode.scrapper.dto.marketplace.WildberriesApiResponse.DataPayload;
+import ru.overcode.scrapper.dto.marketplace.WildberriesApiResponse.DataPayload.Product;
+import ru.overcode.scrapper.dto.marketplace.WildberriesApiResponse.DataPayload.Product.Size;
+import ru.overcode.scrapper.dto.marketplace.WildberriesApiResponse.DataPayload.Product.Size.Price;
 import ru.overcode.scrapper.producer.LinkUpdateProducer;
+import ru.overcode.shared.dto.market.MarketName;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -68,7 +69,7 @@ public class WildberriesProcessorTest extends BaseIntegrationTest {
     public void process_shouldSendInKafka_whenLessThenAmountRuleTriggered() throws Exception {
         Long linkId = RandomUtils.nextLong();
         String nm = String.valueOf(RandomUtils.nextLong(0, 99999));
-        createLink(linkId, URI.create("https://www.wildberries.ru/catalog/" + nm));
+        createLink(linkId, URI.create("https://www.wildberries.ru/catalog/" + nm), MarketName.WILDBERRIES);
 
         long productPrice = 1000L;
 
@@ -96,7 +97,7 @@ public class WildberriesProcessorTest extends BaseIntegrationTest {
     public void process_shouldSkipEvent_whenLessThenAmountRuleNotTriggered() throws Exception {
         Long linkId = RandomUtils.nextLong();
         String nm = String.valueOf(RandomUtils.nextLong(0, 99999));
-        createLink(linkId, URI.create("https://www.wildberries.ru/catalog/" + nm));
+        createLink(linkId, URI.create("https://www.wildberries.ru/catalog/" + nm), MarketName.WILDBERRIES);
 
         long productPrice = 1000L;
 
@@ -124,7 +125,7 @@ public class WildberriesProcessorTest extends BaseIntegrationTest {
     public void process_shouldSkipEvent_whenPriceIsNull() throws Exception {
         Long linkId = RandomUtils.nextLong();
         String nm = String.valueOf(RandomUtils.nextLong(0, 99999));
-        createLink(linkId, URI.create("https://www.wildberries.ru/catalog/" + nm));
+        createLink(linkId, URI.create("https://www.wildberries.ru/catalog/" + nm), MarketName.WILDBERRIES);
 
         long productPrice = 1000L;
 
@@ -152,7 +153,7 @@ public class WildberriesProcessorTest extends BaseIntegrationTest {
     public void process_shouldSkipEvent_whenProductsListIsEmpty() throws Exception {
         Long linkId = RandomUtils.nextLong();
         String nm = String.valueOf(RandomUtils.nextLong(0, 99999));
-        createLink(linkId, URI.create("https://www.wildberries.ru/catalog/" + nm));
+        createLink(linkId, URI.create("https://www.wildberries.ru/catalog/" + nm), MarketName.WILDBERRIES);
 
         long productPrice = 1000L;
 

@@ -1,4 +1,4 @@
-package ru.overcode.scrapper.service.wildberries;
+package ru.overcode.scrapper.service.marketplace;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
@@ -17,41 +17,39 @@ import ru.overcode.scrapper.model.link.Link;
 import java.net.URI;
 import java.util.List;
 
-public class WildberriesServiceTest extends BaseIntegrationTest {
+public class AliexpressServiceTest extends BaseIntegrationTest {
 
     @RegisterExtension
     public static final WireMockExtension WIRE_MOCK_SERVER = WireMockExtension.newInstance()
             .options(WireMockConfiguration.wireMockConfig().dynamicPort())
             .build();
-    private static final String PRODUCTS_API_URI = "/cards/v2/detail?curr=%s&dest=%s&nm=%s";
+    private static final String PRODUCTS_API_URI = "/aer-jsonapi/v1/bx/pdp/web/productData?productId=%s&sourceId=%s";
 
     @DynamicPropertySource
     public static void configureRegistry(DynamicPropertyRegistry registry) {
-        registry.add("feign.wildberries.api.url", WIRE_MOCK_SERVER::baseUrl);
+        registry.add("feign.aliexpress.api.url", WIRE_MOCK_SERVER::baseUrl);
     }
 
     @Autowired
-    private WildberriesService wildberriesService;
-    @Value("${feign.wildberries.api.curr}")
-    private String curr;
-    @Value("${feign.wildberries.api.dest}")
-    private String dest;
+    private AliexpressService aliexpressService;
+    @Value("${feign.aliexpress.api.source-id}")
+    private String sourceId;
 
     @Test
     @DisplayName("Запрос не ретраится")
     public void fetchProducts_shouldNeverRetry_whenExternalServiceUnavailable() {
-        String nm = String.valueOf(RandomUtils.nextLong(0, 999));
+        String productId = String.valueOf(RandomUtils.nextLong(0, 999));
 
         Link link = new Link()
                 .setId(RandomUtils.nextLong())
-                .setUrl(URI.create("https://www.wildberries.ru/catalog/" + nm));
+                .setUrl(URI.create("https://aliexpress.ru/item/" + productId + ".html"));
 
-        String url = PRODUCTS_API_URI.formatted(curr, dest, nm);
+        String url = PRODUCTS_API_URI.formatted(productId, sourceId);
 
         WIRE_MOCK_SERVER.stubFor(WireMock.get(url)
                 .willReturn(WireMock.serviceUnavailable()));
 
-        wildberriesService.fetchProducts(List.of(link));
+        aliexpressService.fetchProducts(List.of(link));
 
         WIRE_MOCK_SERVER.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo(url)));
     }

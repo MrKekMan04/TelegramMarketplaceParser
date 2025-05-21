@@ -18,7 +18,7 @@ public class LinkScheduler {
     public static final String LINK_TASK = "linkTask";
 
     private final List<MarketplaceProcessor> marketplaceProcessors;
-    private final ExecutorService virtualThreadPool;
+    private final ExecutorService threadPool;
 
     @Scheduled(cron = "${schedule.tasks.link.cron}")
     @SchedulerLock(name = LINK_TASK)
@@ -26,7 +26,7 @@ public class LinkScheduler {
         log.info("Start {}", LINK_TASK);
         try {
             CompletableFuture.allOf(marketplaceProcessors.stream()
-                            .map(processor -> CompletableFuture.runAsync(() -> processMarketplace(processor), virtualThreadPool))
+                            .map(processor -> CompletableFuture.runAsync(() -> processMarketplace(processor), threadPool))
                             .toArray(CompletableFuture[]::new))
                     .join();
 

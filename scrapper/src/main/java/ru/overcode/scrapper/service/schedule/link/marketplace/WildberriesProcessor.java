@@ -1,4 +1,4 @@
-package ru.overcode.scrapper.service.schedule.link.wildberries;
+package ru.overcode.scrapper.service.schedule.link.marketplace;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -14,8 +14,8 @@ import ru.overcode.scrapper.producer.LinkUpdateProducer;
 import ru.overcode.scrapper.service.link.LinkService;
 import ru.overcode.scrapper.service.linkrule.TelegramChatLinkRuleService;
 import ru.overcode.scrapper.service.linkrule.rulecheckers.MarketplaceRuleChecker;
+import ru.overcode.scrapper.service.marketplace.WildberriesService;
 import ru.overcode.scrapper.service.schedule.link.MarketplaceProcessor;
-import ru.overcode.scrapper.service.wildberries.WildberriesService;
 import ru.overcode.shared.dto.market.MarketName;
 import ru.overcode.shared.stream.update.ScrapperLinkUpdateDto;
 

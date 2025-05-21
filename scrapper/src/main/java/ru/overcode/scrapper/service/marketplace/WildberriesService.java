@@ -1,13 +1,13 @@
-package ru.overcode.scrapper.service.wildberries;
+package ru.overcode.scrapper.service.marketplace;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import ru.overcode.scrapper.config.feign.wildberries.WildberriesFeignClient;
+import ru.overcode.scrapper.config.feign.marketplace.WildberriesFeignClient;
 import ru.overcode.scrapper.dto.ProductDto;
-import ru.overcode.scrapper.dto.wildberries.WildberriesApiResponse;
-import ru.overcode.scrapper.mapper.wildberries.WilberriesMapper;
+import ru.overcode.scrapper.dto.marketplace.WildberriesApiResponse;
+import ru.overcode.scrapper.mapper.marketplace.WilberriesMapper;
 import ru.overcode.scrapper.model.link.Link;
 
 import java.net.URI;
