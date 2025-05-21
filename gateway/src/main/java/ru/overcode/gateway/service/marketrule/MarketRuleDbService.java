@@ -18,4 +18,9 @@ public class MarketRuleDbService {
     public Optional<MarketRule> findByMarketIdAndRuleId(Long marketId, Long ruleId) {
         return marketRuleRepository.findByMarketIdAndRuleId(marketId, ruleId);
     }
+
+    @Transactional
+    public void save(MarketRule marketRule) {
+        marketRuleRepository.save(marketRule);
+    }
 }

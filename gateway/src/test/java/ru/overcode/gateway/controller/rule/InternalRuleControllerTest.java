@@ -1,8 +1,10 @@
 package ru.overcode.gateway.controller.rule;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -24,6 +26,7 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -44,6 +47,11 @@ public class InternalRuleControllerTest {
 
     @MockBean
     private InternalRuleService internalRuleService;
+
+    @AfterEach
+    public void resetMocks() {
+        Mockito.reset(internalRuleService);
+    }
 
     @Test
     @DisplayName("GET " + RULE_URL + " - проверка контракта при валидных данных. Сортировка отсутствует")
@@ -139,6 +147,19 @@ public class InternalRuleControllerTest {
                 .andExpect(jsonPath("$.data").isEmpty())
                 .andExpect(jsonPath("$.errors").isNotEmpty())
                 .andExpect(jsonPath(getErrorPath("`column` не может быть пустым")).exists());
+    }
+
+    @Test
+    @DisplayName("GET " + RULE_URL + " - проверка контракта при непредвиденной ошибке")
+    public void getRules_shouldReturnInternalError_whenServerError() throws Exception {
+        doThrow(new RuntimeException()).when(internalRuleService).getRules(any());
+
+        mockMvc.perform(get(RULE_URL)
+                        .param("page", "0")
+                        .param("items", "1"))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.data").isEmpty())
+                .andExpect(jsonPath("$.errors").isNotEmpty());
     }
 
     @Test
@@ -274,6 +295,26 @@ public class InternalRuleControllerTest {
     }
 
     @Test
+    @DisplayName("POST " + RULE_URL + " - проверка контракта при непредвиденной ошибке")
+    public void createRule_shouldReturnInternalError_whenServerError() throws Exception {
+        doThrow(new RuntimeException()).when(internalRuleService).createRule(any());
+
+        CreateRuleRequest request = new CreateRuleRequest(
+                RandomUtils.nextLong(),
+                RandomStringUtils.randomAlphabetic(5),
+                RandomStringUtils.randomAlphabetic(5)
+        );
+
+        mockMvc.perform(post(RULE_URL)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.data").isEmpty())
+                .andExpect(jsonPath("$.errors").isNotEmpty());
+    }
+
+    @Test
     @DisplayName("PUT " + UPDATE_RULE_URL + " - проверка контракта при валидных данных")
     public void updateRule_shouldReturnOk_whenAllDataIsValid() throws Exception {
         Long ruleId = RandomUtils.nextLong();
@@ -384,5 +425,25 @@ public class InternalRuleControllerTest {
                 .andExpect(jsonPath("$.data").isEmpty())
                 .andExpect(jsonPath("$.errors").isNotEmpty())
                 .andExpect(jsonPath(getErrorPath("`description` не может быть пустым")).exists());
+    }
+
+    @Test
+    @DisplayName("PUT " + UPDATE_RULE_URL + " - проверка контракта при непредвиденной ошибке")
+    public void updateRule_shouldReturnInternalError_whenServerError() throws Exception {
+        doThrow(new RuntimeException()).when(internalRuleService).updateRule(any(), any());
+
+        Long ruleId = RandomUtils.nextLong();
+        UpdateRuleRequest request = new UpdateRuleRequest(
+                RandomStringUtils.randomAlphabetic(5),
+                RandomStringUtils.randomAlphabetic(5)
+        );
+
+        mockMvc.perform(put(UPDATE_RULE_URL, ruleId)
+                        .characterEncoding(StandardCharsets.UTF_8)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.data").isEmpty())
+                .andExpect(jsonPath("$.errors").isNotEmpty());
     }
 }

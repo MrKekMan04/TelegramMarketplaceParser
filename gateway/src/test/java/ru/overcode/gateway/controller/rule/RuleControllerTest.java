@@ -1,14 +1,17 @@
 package ru.overcode.gateway.controller.rule;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.testcontainers.shaded.org.apache.commons.lang3.RandomUtils;
 import ru.overcode.gateway.dto.rule.AddRuleRequest;
 import ru.overcode.gateway.dto.rule.GetRulesResponse;
 import ru.overcode.gateway.dto.rule.RemoveRuleRequest;
@@ -51,6 +54,11 @@ public class RuleControllerTest {
     @MockBean
     private RuleService ruleService;
 
+    @AfterEach
+    public void resetMocks() {
+        Mockito.reset(ruleService);
+    }
+
     @Test
     @DisplayName("GET " + RULE_URL + " - проверка контракта при валидных данных")
     public void getRules_shouldReturnOk_whenAllDataIsValid() throws Exception {
@@ -76,6 +84,17 @@ public class RuleControllerTest {
                 .andExpect(jsonPath("$.data").isEmpty())
                 .andExpect(jsonPath("$.errors").isNotEmpty())
                 .andExpect(jsonPath(getErrorPath("`linkId` не может быть отрицательным")).exists());
+    }
+
+    @Test
+    @DisplayName("GET " + RULE_URL + " - проверка контракта при непредвиденной ошибке")
+    public void getRules_shouldReturnInternalError_whenServerError() throws Exception {
+        doThrow(new RuntimeException()).when(ruleService).getRules(any());
+
+        mockMvc.perform(get(RULE_URL, RandomUtils.nextLong()))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.data").isEmpty())
+                .andExpect(jsonPath("$.errors").isNotEmpty());
     }
 
     @Test
