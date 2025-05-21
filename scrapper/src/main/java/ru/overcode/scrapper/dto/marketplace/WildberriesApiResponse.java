@@ -1,4 +1,4 @@
-package ru.overcode.scrapper.dto.wildberries;
+package ru.overcode.scrapper.dto.marketplace;
 
 import java.util.List;
 

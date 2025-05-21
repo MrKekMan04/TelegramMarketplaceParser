@@ -45,3 +45,11 @@ feign:
       url: https://card.wb.ru
       dest: -5818883
       curr: rub
+  aliexpress:
+    link:
+      batch-size: 50
+    rule:
+      batch-size: 100
+    api:
+      url: https://aliexpress.ru
+      source-id: 0

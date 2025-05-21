@@ -46,7 +46,7 @@ public class LinkConsumerTest extends BaseIntegrationTest {
     @DisplayName("Ссылка обновляется в таблице link")
     public void handleLinkOutboxDto_shouldUpdate_whenLinkExists() {
         Long linkId = RandomUtils.nextLong();
-        createLink(linkId, URI.create("https://test.ru"));
+        createLink(linkId, URI.create("https://test.ru"), MarketName.WILDBERRIES);
 
         List<LinkOutboxDto> linkOutboxDtos = List.of(
                 new LinkOutboxDto(
@@ -70,7 +70,7 @@ public class LinkConsumerTest extends BaseIntegrationTest {
     @DisplayName("Ссылка удаляется из таблицы link")
     public void handleLinkOutboxDto_shouldDelete_whenLinkExists() {
         Long linkId = RandomUtils.nextLong();
-        createLink(linkId, URI.create("https://test.ru"));
+        createLink(linkId, URI.create("https://test.ru"), MarketName.WILDBERRIES);
 
         List<LinkOutboxDto> linkOutboxDtos = List.of(
                 new LinkOutboxDto(

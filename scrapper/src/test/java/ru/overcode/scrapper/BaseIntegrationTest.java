@@ -44,11 +44,11 @@ public class BaseIntegrationTest {
     @Autowired
     protected TelegramChatLinkRuleRepository telegramChatLinkRuleRepository;
 
-    protected void createLink(Long id, URI url) {
+    protected void createLink(Long id, URI url, MarketName marketName) {
         linkRepository.save(new Link()
                 .setId(id)
                 .setUrl(url)
-                .setMarketName(MarketName.WILDBERRIES));
+                .setMarketName(marketName));
     }
 
     protected void createLinkRule(Long id, Long linkId, Long ruleId, Map<String, String> params) {

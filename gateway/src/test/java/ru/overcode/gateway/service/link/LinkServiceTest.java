@@ -2,6 +2,9 @@ package ru.overcode.gateway.service.link;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.StreamUtils;
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomUtils;
@@ -18,12 +21,10 @@ import ru.overcode.gateway.model.market.Market;
 import ru.overcode.gateway.model.rule.Rule;
 import ru.overcode.shared.dto.event.OutboxEventType;
 import ru.overcode.shared.dto.event.ProcessType;
+import ru.overcode.shared.dto.market.MarketName;
 
 import java.net.URI;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -31,21 +32,25 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class LinkServiceTest extends BaseIntegrationTest {
 
-    private static final String LINK_PREFIX = "https://www.wildberries.ru/catalog/1";
+    private static final Map<MarketName, String> URI_BY_MARKET_NAME = Map.of(
+            MarketName.WILDBERRIES, "https://www.wildberries.ru/catalog/1%d",
+            MarketName.ALIEXPRESS, "https://aliexpress.ru/item/1%d.html"
+    );
 
     @Autowired
     private LinkService linkService;
 
-    @Test
+    @ParameterizedTest
+    @MethodSource("possibleMarkets")
     @DisplayName("Возвращаются отслеживаемые ссылки")
-    public void getLinksWithRules_shouldReturnLinks_whenAllDataIsValid() {
+    public void getLinksWithRules_shouldReturnLinks_whenAllDataIsValid(MarketName marketName) {
         int linksCount = 10;
         Long chatId = RandomUtils.nextLong();
 
         createTelegramChat(chatId);
 
         Stream<Link> expectedLinkOrder = IntStream.range(0, linksCount)
-                .mapToObj(i -> URI.create(LINK_PREFIX + i))
+                .mapToObj(i -> URI.create(URI_BY_MARKET_NAME.get(marketName).formatted(i)))
                 .map(this::createLink)
                 .peek(link -> createBinding(chatId, link.getId()))
                 .sorted(Comparator.comparing(Link::getId));
@@ -61,14 +66,15 @@ public class LinkServiceTest extends BaseIntegrationTest {
         });
     }
 
-    @Test
+    @ParameterizedTest
+    @MethodSource("possibleMarkets")
     @DisplayName("Вместе с ссылкой возвращаются отслеживаемые для неё правила")
-    public void getLinksWithRules_shouldReturnLinksWithRules_whenAllDataIsValid() {
+    public void getLinksWithRules_shouldReturnLinksWithRules_whenAllDataIsValid(MarketName marketName) {
         int rulesCount = 3;
         Long chatId = RandomUtils.nextLong();
 
         createTelegramChat(chatId);
-        Link link = createLink(URI.create(LINK_PREFIX));
+        Link link = createLink(URI.create(URI_BY_MARKET_NAME.get(marketName).formatted(1)));
         TelegramChatLink binding = createBinding(chatId, link.getId());
         Stream<Rule> expectedRulesOrder = Stream.generate(this::createRule)
                 .limit(rulesCount)
@@ -93,17 +99,18 @@ public class LinkServiceTest extends BaseIntegrationTest {
         assertThrows(UnprocessableEntityException.class, () -> linkService.getLinksWithRules(chatId));
     }
 
-    @Test
+    @ParameterizedTest
+    @MethodSource("possibleMarkets")
     @DisplayName("""
             Ссылка добавляется в отслеживаемые.
             Также реплицируется в outbox, если до этого не была отправлена
             """)
-    public void addLink_shouldAdd_whenAllDataIsValid() {
+    public void addLink_shouldAdd_whenAllDataIsValid(MarketName marketName) {
         Long chatId = RandomUtils.nextLong();
 
         createTelegramChat(chatId);
-        URI url = URI.create(LINK_PREFIX);
-        Market market = createMarket(url.getHost().toLowerCase());
+        URI url = URI.create(URI_BY_MARKET_NAME.get(marketName).formatted(1));
+        Market market = createMarket(url.getHost().toLowerCase(), marketName);
 
         AddLinkResponse response = linkService.addLink(chatId, url);
 
@@ -121,43 +128,53 @@ public class LinkServiceTest extends BaseIntegrationTest {
         assertEquals(OutboxEventType.UPSERT, optionalOutbox.getFirst().getEventType());
     }
 
-    @Test
+    @ParameterizedTest
+    @MethodSource("possibleMarkets")
     @DisplayName("Выбрасывается исключение при не найденном чате")
-    public void addLink_shouldThrow_whenChatNotFound() {
+    public void addLink_shouldThrow_whenChatNotFound(MarketName marketName) {
         Long chatId = RandomUtils.nextLong();
 
-        assertThrows(UnprocessableEntityException.class, () -> linkService.addLink(chatId, URI.create(LINK_PREFIX)));
+        assertThrows(
+                UnprocessableEntityException.class,
+                () -> linkService.addLink(chatId, URI.create(URI_BY_MARKET_NAME.get(marketName).formatted(1)))
+        );
     }
 
-    @Test
+    @ParameterizedTest
+    @MethodSource("possibleMarkets")
     @DisplayName("Выбрасывается исключение при не найденном маркетплейсе")
-    public void addLink_shouldThrow_whenMarketNotFound() {
+    public void addLink_shouldThrow_whenMarketNotFound(MarketName marketName) {
         Long chatId = RandomUtils.nextLong();
 
         createTelegramChat(chatId);
 
-        assertThrows(UnprocessableEntityException.class, () -> linkService.addLink(chatId, URI.create(LINK_PREFIX)));
+        assertThrows(
+                UnprocessableEntityException.class,
+                () -> linkService.addLink(chatId, URI.create(URI_BY_MARKET_NAME.get(marketName).formatted(1)))
+        );
     }
 
-    @Test
+    @ParameterizedTest
+    @MethodSource("possibleMarkets")
     @DisplayName("Выбрасывается исключение при уже отслеживаемой ссылке")
-    public void addLink_shouldThrow_whenLinkAlreadyAdded() {
+    public void addLink_shouldThrow_whenLinkAlreadyAdded(MarketName marketName) {
         Long chatId = RandomUtils.nextLong();
-        URI url = URI.create(LINK_PREFIX);
+        URI url = URI.create(URI_BY_MARKET_NAME.get(marketName).formatted(1));
 
         createTelegramChat(chatId);
         Link link = createLink(url);
-        createMarket(url.getHost());
+        createMarket(url.getHost(), marketName);
         createBinding(chatId, link.getId());
 
         assertThrows(UnprocessableEntityException.class, () -> linkService.addLink(chatId, url));
     }
 
-    @Test
+    @ParameterizedTest
+    @MethodSource("possibleMarkets")
     @DisplayName("Ссылка удаляется из отслеживаемых вместе с правилами")
-    public void removeLink_shouldRemoveWithRules_whenAllDataIsValid() {
+    public void removeLink_shouldRemoveWithRules_whenAllDataIsValid(MarketName marketName) {
         Long chatId = RandomUtils.nextLong();
-        URI url = URI.create(LINK_PREFIX);
+        URI url = URI.create(URI_BY_MARKET_NAME.get(marketName).formatted(1));
 
         createTelegramChat(chatId);
         Link link = createLink(url);
@@ -174,12 +191,13 @@ public class LinkServiceTest extends BaseIntegrationTest {
         assertFalse(optionalBindingRule.isPresent());
     }
 
-    @Test
+    @ParameterizedTest
+    @MethodSource("possibleMarkets")
     @DisplayName("Выбрасывается исключение при не найденном чате")
-    public void removeLink_shouldThrow_whenChatNotFound() {
+    public void removeLink_shouldThrow_whenChatNotFound(MarketName marketName) {
         Long chatId = RandomUtils.nextLong();
 
-        Link link = createLink(URI.create(LINK_PREFIX));
+        Link link = createLink(URI.create(URI_BY_MARKET_NAME.get(marketName).formatted(1)));
 
         assertThrows(UnprocessableEntityException.class, () -> linkService.removeLink(chatId, link.getId()));
     }
@@ -195,14 +213,20 @@ public class LinkServiceTest extends BaseIntegrationTest {
         assertThrows(UnprocessableEntityException.class, () -> linkService.removeLink(chatId, linkId));
     }
 
-    @Test
+    @ParameterizedTest
+    @MethodSource("possibleMarkets")
     @DisplayName("Выбрасывается исключение при не отслеживаемой ссылке")
-    public void removeLink_shouldThrow_whenLinkNotAdded() {
+    public void removeLink_shouldThrow_whenLinkNotAdded(MarketName marketName) {
         Long chatId = RandomUtils.nextLong();
 
         createTelegramChat(chatId);
-        Link link = createLink(URI.create(LINK_PREFIX));
+        Link link = createLink(URI.create(URI_BY_MARKET_NAME.get(marketName).formatted(1)));
 
         assertThrows(UnprocessableEntityException.class, () -> linkService.removeLink(chatId, link.getId()));
+    }
+
+    private static Stream<Arguments> possibleMarkets() {
+        return Arrays.stream(MarketName.values())
+                .map(Arguments::of);
     }
 }

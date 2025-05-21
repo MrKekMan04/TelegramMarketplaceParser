@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.testcontainers.shaded.org.awaitility.Awaitility;
 import ru.overcode.scrapper.BaseIntegrationTest;
-import ru.overcode.scrapper.service.schedule.link.wildberries.WildberriesProcessor;
+import ru.overcode.scrapper.service.schedule.link.marketplace.WildberriesProcessor;
 
 import java.util.concurrent.TimeUnit;
 

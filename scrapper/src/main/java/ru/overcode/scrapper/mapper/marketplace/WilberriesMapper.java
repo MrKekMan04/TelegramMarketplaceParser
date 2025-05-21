@@ -1,10 +1,10 @@
-package ru.overcode.scrapper.mapper.wildberries;
+package ru.overcode.scrapper.mapper.marketplace;
 
 import org.springframework.stereotype.Component;
 import ru.overcode.scrapper.dto.ProductDto;
-import ru.overcode.scrapper.dto.wildberries.WildberriesApiResponse;
-import ru.overcode.scrapper.dto.wildberries.WildberriesApiResponse.DataPayload;
-import ru.overcode.scrapper.dto.wildberries.WildberriesApiResponse.DataPayload.Product.Size.Price;
+import ru.overcode.scrapper.dto.marketplace.WildberriesApiResponse;
+import ru.overcode.scrapper.dto.marketplace.WildberriesApiResponse.DataPayload;
+import ru.overcode.scrapper.dto.marketplace.WildberriesApiResponse.DataPayload.Product.Size.Price;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

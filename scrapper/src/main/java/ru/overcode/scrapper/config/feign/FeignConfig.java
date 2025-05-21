@@ -10,7 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.openfeign.support.SpringMvcContract;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import ru.overcode.scrapper.config.feign.wildberries.WildberriesFeignClient;
+import ru.overcode.scrapper.config.feign.marketplace.AliexpressFeignClient;
+import ru.overcode.scrapper.config.feign.marketplace.WildberriesFeignClient;
 
 @Configuration
 public class FeignConfig {
@@ -28,5 +29,20 @@ public class FeignConfig {
                 .logger(new Slf4jLogger(WildberriesFeignClient.class))
                 .logLevel(Logger.Level.BASIC)
                 .target(WildberriesFeignClient.class, wildberriesApiUrl);
+    }
+
+    @Bean
+    public AliexpressFeignClient aliexpressFeignClient (
+            @Value("${feign.aliexpress.api.url}")
+            String aliExpressApiUrl
+    ) {
+        return Feign.builder()
+                .contract(new SpringMvcContract())
+                .encoder(new GsonEncoder())
+                .decoder(new GsonDecoder())
+                .retryer(Retryer.NEVER_RETRY)
+                .logger(new Slf4jLogger(AliexpressFeignClient.class))
+                .logLevel(Logger.Level.BASIC)
+                .target(AliexpressFeignClient.class, aliExpressApiUrl);
     }
 }

@@ -1,8 +1,8 @@
-package ru.overcode.scrapper.config.feign.wildberries;
+package ru.overcode.scrapper.config.feign.marketplace;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.overcode.scrapper.dto.wildberries.WildberriesApiResponse;
+import ru.overcode.scrapper.dto.marketplace.WildberriesApiResponse;
 
 public interface WildberriesFeignClient {
 

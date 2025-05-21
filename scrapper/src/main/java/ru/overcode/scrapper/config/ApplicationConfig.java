@@ -24,7 +24,12 @@ public class ApplicationConfig {
     }
 
     @Bean
+    public ExecutorService threadPool() {
+        return Executors.newFixedThreadPool(4);
+    }
+
+    @Bean
     public ExecutorService virtualThreadPool() {
-        return Executors.newFixedThreadPool(10, Thread.ofVirtual().factory());
+        return Executors.newVirtualThreadPerTaskExecutor();
     }
 }
