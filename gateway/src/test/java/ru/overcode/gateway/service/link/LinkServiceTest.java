@@ -110,7 +110,7 @@ public class LinkServiceTest extends BaseIntegrationTest {
 
         createTelegramChat(chatId);
         URI url = URI.create(URI_BY_MARKET_NAME.get(marketName).formatted(1));
-        Market market = createMarket(url.getHost().toLowerCase(), marketName);
+        Market market = createMarket(marketName, url.getHost().toLowerCase());
 
         AddLinkResponse response = linkService.addLink(chatId, url);
 
@@ -163,7 +163,7 @@ public class LinkServiceTest extends BaseIntegrationTest {
 
         createTelegramChat(chatId);
         Link link = createLink(url);
-        createMarket(url.getHost(), marketName);
+        createMarket(marketName, url.getHost());
         createBinding(chatId, link.getId());
 
         assertThrows(UnprocessableEntityException.class, () -> linkService.addLink(chatId, url));

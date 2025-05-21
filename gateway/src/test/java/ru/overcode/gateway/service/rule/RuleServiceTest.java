@@ -15,7 +15,6 @@ import ru.overcode.gateway.model.link.Link;
 import ru.overcode.gateway.model.market.Market;
 import ru.overcode.shared.dto.event.OutboxEventType;
 import ru.overcode.shared.dto.event.ProcessType;
-import ru.overcode.shared.dto.market.MarketName;
 
 import java.net.URI;
 import java.util.Comparator;
@@ -38,7 +37,7 @@ public class RuleServiceTest extends BaseIntegrationTest {
     public void getRules_shouldReturnRulesForLink_whenAllDataIsValid() {
         URI url = URI.create(URL);
         Long ruleId = 1L;
-        Market market = createMarket(url.getHost(), MarketName.WILDBERRIES);
+        Market market = createMarket(url.getHost());
         Link link = createLink(url, market.getId());
         createRule(ruleId);
         createMarketRule(market.getId(), ruleId);
@@ -76,7 +75,7 @@ public class RuleServiceTest extends BaseIntegrationTest {
         Long chatId = RandomUtils.nextLong();
         Long ruleId = 1L;
         createTelegramChat(chatId);
-        Market market = createMarket(url.getHost(), MarketName.WILDBERRIES);
+        Market market = createMarket(url.getHost());
         Link link = createLink(url, market.getId());
         createRule(ruleId);
         createMarketRule(market.getId(), ruleId);
@@ -101,7 +100,7 @@ public class RuleServiceTest extends BaseIntegrationTest {
         URI url = URI.create(URL);
         Long ruleId = 1L;
         Long chatId = RandomUtils.nextLong();
-        Market market = createMarket(url.getHost(), MarketName.WILDBERRIES);
+        Market market = createMarket(url.getHost());
         Link link = createLink(url, market.getId());
         createRule(ruleId);
         createMarketRule(market.getId(), ruleId);
@@ -123,7 +122,7 @@ public class RuleServiceTest extends BaseIntegrationTest {
         Long linkId = RandomUtils.nextLong();
         Long ruleId = 1L;
         createTelegramChat(chatId);
-        Market market = createMarket(url.getHost(), MarketName.WILDBERRIES);
+        Market market = createMarket(url.getHost());
         createRule(ruleId);
         createMarketRule(market.getId(), ruleId);
         TelegramChatLink binding = createBinding(chatId, linkId);
@@ -143,7 +142,7 @@ public class RuleServiceTest extends BaseIntegrationTest {
         Long chatId = RandomUtils.nextLong();
         Long ruleId = 1L;
         createTelegramChat(chatId);
-        Market market = createMarket(url.getHost(), MarketName.WILDBERRIES);
+        Market market = createMarket(url.getHost());
         Link link = createLink(url, market.getId());
         createRule(ruleId);
         createMarketRule(market.getId(), ruleId);
@@ -159,7 +158,7 @@ public class RuleServiceTest extends BaseIntegrationTest {
         Long chatId = RandomUtils.nextLong();
         Long ruleId = 1L;
         createTelegramChat(chatId);
-        Market market = createMarket(url.getHost(), MarketName.WILDBERRIES);
+        Market market = createMarket(url.getHost());
         Link link = createLink(url, market.getId());
         createRule(ruleId);
         TelegramChatLink binding = createBinding(chatId, link.getId());
@@ -179,7 +178,7 @@ public class RuleServiceTest extends BaseIntegrationTest {
         Long chatId = RandomUtils.nextLong();
         Long ruleId = 1L;
         createTelegramChat(chatId);
-        Market market = createMarket(url.getHost(), MarketName.WILDBERRIES);
+        Market market = createMarket(url.getHost());
         Link link = createLink(url, market.getId());
         createRule(ruleId);
         TelegramChatLink binding = createBinding(chatId, link.getId());
@@ -200,7 +199,7 @@ public class RuleServiceTest extends BaseIntegrationTest {
         Long chatId = RandomUtils.nextLong();
         Long ruleId = 1L;
         createTelegramChat(chatId);
-        Market market = createMarket(url.getHost(), MarketName.WILDBERRIES);
+        Market market = createMarket(url.getHost());
         Link link = createLink(url, market.getId());
         createRule(ruleId);
         TelegramChatLink binding = createBinding(chatId, link.getId());
